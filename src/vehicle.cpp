@@ -5498,6 +5498,10 @@ void vehicle::refresh()
                                               vpi.has_flag( "WATER_WHEEL" ) ) ) {
             extra_drag += vpi.power;
         }
+        if( vpi.has_flag( "SUPER_DRAG" ) ) {
+	    extra_drag *= 10;
+	}
+
         if( camera_on && vpi.has_flag( "CAMERA" ) ) {
             vp.part().enabled = true;
         } else if( !camera_on && vpi.has_flag( "CAMERA" ) ) {
