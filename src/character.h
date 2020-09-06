@@ -319,6 +319,21 @@ struct consumption_event {
     void deserialize( JsonIn &jsin );
 };
 
+struct weariness {
+    int tracker = 0;
+    int intake = 0;
+
+    // Semi-consecutive 5 minute ticks of low activity (or 2 if we're sleeping)
+    int low_activity_ticks = 0;
+    // Consecutive ticks of non-low activity
+    // If it gets high enough, low_activity_ticks decreases by 1
+    int tick_counter = 0;
+    // How many ticks since we've decreased intake
+    int ticks_since_decrease = 0;
+
+    void clear();
+};
+
 inline social_modifiers operator+( social_modifiers lhs, const social_modifiers &rhs )
 {
     lhs += rhs;
@@ -2489,7 +2504,12 @@ class Character : public Creature, public visitable<Character>
         bool defer_move( const tripoint &next );
         time_duration get_consume_time( const item &it );
 
+        int weariness_level() const;
         float activity_level() const;
+        float exertion_adjusted_move_multiplier( float level = -1.0f ) const;
+        void try_reduce_weariness( float exertion );
+        float maximum_exertion_level() const;
+        std::string debug_weary_info() const;
 
     protected:
         Character();
@@ -2523,6 +2543,9 @@ class Character : public Creature, public visitable<Character>
         int healthy = 0;
         int healthy_mod = 0;
 
+        weariness weary;
+        int weary_threshold() const;
+        int weariness() const;
         // Our bmr at no activity level
         int base_bmr() const;
 
