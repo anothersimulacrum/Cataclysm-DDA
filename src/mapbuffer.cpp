@@ -272,25 +272,12 @@ submap *mapbuffer::unserialize_submaps( const tripoint &p )
 
 void mapbuffer::deserialize( JsonIn &jsin )
 {
-    jsin.start_array();
-    while( !jsin.end_array() ) {
+    for( const JsonObject jo : jsin.get_array() ) {
         std::unique_ptr<submap> sm = std::make_unique<submap>();
-        tripoint submap_coordinates;
-        jsin.start_object();
-        int version = 0;
-        while( !jsin.end_object() ) {
-            std::string submap_member_name = jsin.get_member_name();
-            if( submap_member_name == "version" ) {
-                version = jsin.get_int();
-            } else if( submap_member_name == "coordinates" ) {
-                jsin.start_array();
-                tripoint loc{ jsin.get_int(), jsin.get_int(), jsin.get_int() };
-                jsin.end_array();
-                submap_coordinates = loc;
-            } else {
-                sm->load( jsin, submap_member_name, version );
-            }
-        }
+        const JsonArray &coords = jo.get_array( "coordinates" );
+        tripoint submap_coordinates{ coords[0], coords[1], coords[2] };
+        int version = jo.get_int( "version" );
+        sm->load( jo, version );
 
         if( !add_submap( submap_coordinates, sm ) ) {
             debugmsg( "submap %d,%d,%d was already loaded", submap_coordinates.x, submap_coordinates.y,
