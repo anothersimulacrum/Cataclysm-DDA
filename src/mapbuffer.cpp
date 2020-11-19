@@ -275,7 +275,7 @@ void mapbuffer::deserialize( JsonIn &jsin )
     for( const JsonObject jo : jsin.get_array() ) {
         std::unique_ptr<submap> sm = std::make_unique<submap>();
         const JsonArray &coords = jo.get_array( "coordinates" );
-        tripoint submap_coordinates{ coords[0], coords[1], coords[2] };
+        tripoint submap_coordinates{ coords.get_int( 0 ), coords.get_int( 1 ), coords.get_int( 2 ) };
         int version = jo.get_int( "version" );
         sm->load( jo, version );
 

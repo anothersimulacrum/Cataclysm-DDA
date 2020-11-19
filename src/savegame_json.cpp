@@ -3968,54 +3968,89 @@ void submap::store( JsonOut &jsout ) const
     }
 }
 
-void submap::load( JsonObject &jo, int version )
+void submap::load( const JsonObject &jo, int version )
 {
+    bool rubpow_update = version < 22;
     last_touched = time_point( jo.get_int( "turn_last_touched" ) );
     temperature = jo.get_int( "temperature" );
-    // TODO: try block around this to error out if we come up short?
-    /*
-    * terrain is encoded using simple RLE
-     * e.g. for "123332"
-     *          "221111"
-     * ["t_1","t_2",["t_3",3],["t_2",3],["t_1",4]]
-     */
     JsonArray terrain = jo.get_array( "terrain" );
-    int index = 0;
-    int remaining = 0;
-    int_id<ter_t> iid;
-    for( int j = 0; j < SEEY; j++ ) {
-        // NOLINTNEXTLINE(modernize-loop-convert)
-        for( int i = 0; i < SEEX; i++ ) {
-            if( remaining == 0 ) {
-                // This terrain is on this square only
-                if( terrain.has_string( index ) ) {
-                    iid = ter_str_id( terrain.get_string( index ) ).id();
-                    // This terrain is on this square, and next encoded[1] squares
-                } else if( terrain.has_array( index ) ) {
-                    JsonArray encoded = terrain.get_array( index );
-                    iid = ter_str_id( encoded.get_string( 0 ) ).id();
-                    remaining = encoded.get_int( 1 ) - 1;
+    if( rubpow_update ) {
+        item rock = item( "rock", calendar::turn_zero );
+        item chunk = item( "steel_chunk", calendar::turn_zero );
+        for( int j = 0; j < SEEY; ++j ) {
+            for( int i = 0; i < SEEX; ++i ) {
+                // Convert  our j (y) and i(x) into an index
+                const ter_str_id tid( terrain.get_string( ( j * SEEY ) + i ) );
+                if( tid == ter_t_rubble ) {
+                    ter[i][j] = ter_id( "t_dirt" );
+                    frn[i][j] = furn_id( "f_rubble" );
+                    itm[i][j].insert( rock );
+                    itm[i][j].insert( rock );
+                } else if( tid == ter_t_wreckage ) {
+                    ter[i][j] = ter_id( "t_dirt" );
+                    frn[i][j] = furn_id( "f_wreckage" );
+                    itm[i][j].insert( chunk );
+                    itm[i][j].insert( chunk );
+                } else if( tid == ter_t_ash ) {
+                    ter[i][j] = ter_id( "t_dirt" );
+                    frn[i][j] = furn_id( "f_ash" );
+                } else if( tid == ter_t_pwr_sb_support_l ) {
+                    ter[i][j] = ter_id( "t_support_l" );
+                } else if( tid == ter_t_pwr_sb_switchgear_l ) {
+                    ter[i][j] = ter_id( "t_switchgear_l" );
+                } else if( tid == ter_t_pwr_sb_switchgear_s ) {
+                    ter[i][j] = ter_id( "t_switchgear_s" );
                 } else {
-                    debugmsg( "Mapbuffer terrain data is corrupt, expected string or array." );
+                    ter[i][j] = tid.id();
                 }
-                // We just loaded a value from the array, move on to the next one.
-                ++index;
-            } else {
-                --remaining;
             }
-            ter[i][j] = iid;
+        }
+    } else {
+        // TODO: try block around this to error out if we come up short?
+        /*
+        * terrain is encoded using simple RLE
+         * e.g. for "123332"
+         *          "221111"
+         * ["t_1","t_2",["t_3",3],["t_2",3],["t_1",4]]
+         */
+        int index = 0;
+        int remaining = 0;
+        int_id<ter_t> iid;
+        for( int j = 0; j < SEEY; j++ ) {
+            // NOLINTNEXTLINE(modernize-loop-convert)
+            for( int i = 0; i < SEEX; i++ ) {
+                if( remaining == 0 ) {
+                    // This terrain is on this square only
+                    if( terrain.has_string( index ) ) {
+                        iid = ter_str_id( terrain.get_string( index ) ).id();
+                        // This terrain is on this square, and next encoded[1] squares
+                    } else if( terrain.has_array( index ) ) {
+                        JsonArray encoded = terrain.get_array( index );
+                        iid = ter_str_id( encoded.get_string( 0 ) ).id();
+                        remaining = encoded.get_int( 1 ) - 1;
+                    } else {
+                        debugmsg( "Mapbuffer terrain data is corrupt, expected string or array." );
+                    }
+                    // We just loaded a value from the array, move on to the next one.
+                    ++index;
+                } else {
+                    --remaining;
+                }
+                ter[i][j] = iid;
+            }
+        }
+        if( remaining != 0 ) {
+            // Uh-oh! We had more terrain here than fits in a submap...
+            debugmsg( "Mapbuffer terrain data is corrupt, tile data remaining." );
         }
     }
-    if( remaining != 0 ) {
-        // Uh-oh! We had more terrain here than fits in a submap...
-        debugmsg( "Mapbuffer terrain data is corrupt, tile data remaining." );
-    }
+
     /*
      * radiation is similarly encoded using RLE
      * But it's a little wackier this time.
      * It is saved as a flat array of ints. Each pair of 2 ints correspond to a set
      * Value #1 in the set: the radiation level, Value #2: how many squares have this level
-    * e.g for "0010"
+    * e.g for  "0010"
      *         "0121"
      *         "0010"
      *         "0000"
@@ -4035,189 +4070,213 @@ void submap::load( JsonObject &jo, int version )
                 rad_cell++;
             }
         }
-        /*
-         * furniture is stored as an array of arrays
-         * Each sub-array consists of 3 values:
-         * 0. The x coordinate of the furniture [0 to SEEX - 1]
-         * 1. The y coordinate of the furniture [0 to SEEY - 1]
-         * 2. The string_id of the furniture
-         */
-        for( const JsonArray ja : jo.get_array( "furniture" ) ) {
-            int i = ja.get_int( 0 );
-            int j = ja.get_int( 1 );
-            frn[i][j] = furn_id( jsin.get_string( 2 ) );
-        }
-        /*
-         * items are stored similarly to furniture.
-         * 0. x
-         * 1. y
-         * 2. Array of JsonObjects (items)
-         */
-        for( const JsonArray ja : jo.get_array( "items" ) ) {
-            int i = ja.get_int( 0 );
-            int j = jsin.get_int( 1 );
-            const point p( i, j );
-            for( const JsonObject jitem : ja.get_array( 2 ) ) {
-                item tmp;
-                // Load the item from the JsonObject
-                tmp.deserialize( jitem );
+    }
 
-                if( tmp.is_emissive() ) {
-                    update_lum_add( p, tmp );
-                }
+    /*
+     * furniture is stored as an array of arrays
+     * Each sub-array consists of 3 values:
+     * 0. The x coordinate of the furniture [0 to SEEX - 1]
+     * 1. The y coordinate of the furniture [0 to SEEY - 1]
+     * 2. The string_id of the furniture
+     */
+    for( const JsonArray ja : jo.get_array( "furniture" ) ) {
+        int i = ja.get_int( 0 );
+        int j = ja.get_int( 1 );
+        frn[i][j] = furn_id( ja.get_string( 2 ) );
+    }
 
-                const cata::colony<item>::iterator it = itm[p.x][p.y].insert( tmp );
-                if( tmp.needs_processing() ) {
-                    active_items.add( *it, p );
-                }
+    /*
+     * items are stored similarly to furniture.
+     * 0. x
+     * 1. y
+     * 2. Array of JsonObjects (items)
+     */
+    JsonArray jitemlist = jo.get_array( "items" );
+    for( size_t index = 0; index < jitemlist.size(); index += 3 ) {
+        int i = jitemlist.get_int( index );
+        int j = jitemlist.get_int( index + 1 );
+        const point p( i, j );
+        JsonArray jitems = jitemlist.get_array( index + 2 );
+        for( size_t item_idx = 0; item_idx < jitems.size(); ++item_idx ) {
+            item tmp;
+            // Load the item from the array
+            jitems.read( item_idx, tmp );
+
+            if( tmp.is_emissive() ) {
+                update_lum_add( p, tmp );
+            }
+
+            const cata::colony<item>::iterator it = itm[p.x][p.y].insert( tmp );
+            if( tmp.needs_processing() ) {
+                active_items.add( *it, p );
             }
         }
-        /*
-         * traps are also stored similarly to furniture
-         * 0. x
-         * 1. y
-         * 2. The string_id of the trap
-         */
-        for( const JsonArray ja : jo.get_array( "traps" ) ) {
-            int i = ja.get_int( 0 );
-            int j = ja.get_int( 1 );
-            const point p( i, j );
-            // TODO: jsin should support returning an id like jsin.get_id<trap>()
-            const trap_str_id trid( ja.get_string( 2 ) );
-            trp[p.x][p.y] = trid.id();
-        }
-        /*
-         * fields are stored as a flat array
-         * It can be organized into sets of 3 values
-         * 0. The x coordinate of the field [0 to SEEX - 1]
-         * 1. The y coordinate of the field [0 to SEEY - 1]
-         * 2. An array containing information about the field
-         * The field array is organized as:
-         * 0. The string_id of the field
-         * 1. The intensity of the field
-         * 2. The age of the field
-         *
-         * Since we are operating on sets of 3, go forward 3 each iteration
-         */
-        JsonArray fields = jo.get_array( "fields" );
-        for( size_t index = 0; index < fields.size(); index += 3 ) {
-            // Coordinates loop
-            int i = fields.get_int( index );
-            int j = fields.get_int( index + 1 );
+    }
 
-            JsonArray jfield = fields.get_array( index + 2 );
-            const std::string type_str = jfield.get_string( 0 );
-            int intensity = jsin.get_int( 1 );
-            int age = jsin.get_int( 2 );
-            const field_type_id ft = field_type_id( type_str );
-            if( fld[i][j].find_field( ft ) == nullptr ) {
-                field_count++;
-            }
-            fld[i][j].add_field( ft, intensity, time_duration::from_turns( age ) );
-            }
-	    /* 
-	     * grafitti: similar pattern to furniture, items, etc
-	     * 0. x
-	     * 1. y
-	     * 2. graffiti string
-	     */
-	    for( const JsonArray ja : jo.get_array( "graffiti" ) ) {
-            int i = ja.get_int(0);
-            int j = ja.get_int(1);
-            const point p( i, j );
-            set_graffiti( p, ja.get_string(2) );
+    /*
+     * traps are also stored similarly to furniture
+     * 0. x
+     * 1. y
+     * 2. The string_id of the trap
+     */
+    for( const JsonArray ja : jo.get_array( "traps" ) ) {
+        int i = ja.get_int( 0 );
+        int j = ja.get_int( 1 );
+        const point p( i, j );
+        // TODO: jsin should support returning an id like jsin.get_id<trap>()
+        const trap_str_id trid( ja.get_string( 2 ) );
+        trp[p.x][p.y] = trid.id();
+    }
+
+    /*
+     * fields are stored as a flat array
+     * It can be organized into sets of 3 values
+     * 0. The x coordinate of the field [0 to SEEX - 1]
+     * 1. The y coordinate of the field [0 to SEEY - 1]
+     * 2. An array containing information about the field
+     * The field array is organized as:
+     * 0. The string_id of the field
+     * 1. The intensity of the field
+     * 2. The age of the field
+     *
+     * Since we are operating on sets of 3, go forward 3 each iteration
+     */
+    JsonArray fields = jo.get_array( "fields" );
+    for( size_t index = 0; index < fields.size(); index += 3 ) {
+        int i = fields.get_int( index );
+        int j = fields.get_int( index + 1 );
+
+        JsonArray jfield = fields.get_array( index + 2 );
+        int type_int = 0;
+        std::string type_str;
+        if( jfield.test_int() ) {
+            type_int = jfield.get_int( 0 );
+        } else {
+            type_str = jfield.get_string( 0 );
         }
-	    /*
-	     * cosmetics
-	     * Not quite sure what these are
-	     * Format:
-	     * Array of subarrays
-	     * Each subarray:
-	     * 0, x
-	     * 1. y
-	     * 2. type of comestic/
-    } else if( member_name == "cosmetics" ) {
-        jsin.start_array();
+        int intensity = jfield.get_int( 1 );
+        int age = jfield.get_int( 2 );
+        field_type_id ft;
+        if( !type_str.empty() ) {
+            ft = field_type_id( type_str );
+        } else {
+            ft = field_types::get_field_type_by_legacy_enum( type_int ).id;
+        }
+        if( fld[i][j].find_field( ft ) == nullptr ) {
+            field_count++;
+        }
+        fld[i][j].add_field( ft, intensity, time_duration::from_turns( age ) );
+    }
+
+    /*
+     * grafitti: similar pattern to furniture, items, etc
+     * 0. x
+     * 1. y
+     * 2. graffiti string
+     */
+    for( const JsonArray ja : jo.get_array( "graffiti" ) ) {
+        int i = ja.get_int( 0 );
+        int j = ja.get_int( 1 );
+        const point p( i, j );
+        set_graffiti( p, ja.get_string( 2 ) );
+    }
+
+    /*
+     * cosmetics
+     * Not quite sure what these are
+     * Format:
+     * Array of subarrays
+     * Each subarray:
+     * 0, x
+     * 1. y
+     * 2. type of comestic?
+    */
+    for( const JsonArray ja : jo.get_array( "cosmetics" ) ) {
         std::map<std::string, std::string> tcosmetics;
 
-        while( !jsin.end_array() ) {
-            jsin.start_array();
-            int i = jsin.get_int();
-            int j = jsin.get_int();
-            const point p( i, j );
-            std::string type, str;
-            type = jsin.get_string();
-            str = jsin.get_string();
+        int i = ja.get_int( 0 );
+        int j = ja.get_int( 1 );
+        const point p( i, j );
+        std::string type, str;
+        // Try to read as current format
+        if( ja.has_string( 2 ) ) {
+            type = ja.get_string( 2 );
+            str = ja.get_string( 3 );
             insert_cosmetic( p, type, str );
-            jsin.end_array();
-        }
-    } else if( member_name == "spawns" ) {
-        jsin.start_array();
-        while( !jsin.end_array() ) {
-            jsin.start_array();
-            // TODO: json should know how to read an string_id
-            const mtype_id type = mtype_id( jsin.get_string() );
-            int count = jsin.get_int();
-            int i = jsin.get_int();
-            int j = jsin.get_int();
-            const point p( i, j );
-            int faction_id = jsin.get_int();
-            int mission_id = jsin.get_int();
-            bool friendly = jsin.get_bool();
-            std::string name = jsin.get_string();
-            jsin.end_array();
-            spawn_point tmp( type, count, p, faction_id, mission_id, friendly, name );
-            spawns.push_back( tmp );
-        }
-    } else if( member_name == "vehicles" ) {
-        jsin.start_array();
-        while( !jsin.end_array() ) {
-            std::unique_ptr<vehicle> tmp = std::make_unique<vehicle>();
-            jsin.read( *tmp );
-            vehicles.push_back( std::move( tmp ) );
-        }
-    } else if( member_name == "partial_constructions" ) {
-        jsin.start_array();
-        while( !jsin.end_array() ) {
-            partial_con pc;
-            int i = jsin.get_int();
-            int j = jsin.get_int();
-            int k = jsin.get_int();
-            tripoint pt = tripoint( i, j, k );
-            pc.counter = jsin.get_int();
-            if( jsin.test_int() ) {
-                // Oops, int id incorrectly saved by legacy code, just load it and hope for the best
-                pc.id = construction_id( jsin.get_int() );
-            } else {
-                pc.id = construction_str_id( jsin.get_string() ).id();
-            }
-            jsin.start_array();
-            while( !jsin.end_array() ) {
-                item tmp;
-                jsin.read( tmp );
-                pc.components.push_back( tmp );
-            }
-            partial_constructions[pt] = pc;
-        }
-    } else if( member_name == "computers" ) {
-        if( jsin.test_array() ) {
-            jsin.start_array();
-            while( !jsin.end_array() ) {
-                point loc;
-                jsin.read( loc );
-                auto new_comp_it = computers.emplace( loc, computer( "BUGGED_COMPUTER", -100 ) ).first;
-                jsin.read( new_comp_it->second );
-            }
         } else {
-            // only load legacy data here, but do not update to std::map, since
-            // the terrain may not have been loaded yet.
-            legacy_computer = std::make_unique<computer>( "BUGGED_COMPUTER", -100 );
-            jsin.read( *legacy_computer );
+            // Otherwise read as most recent old format
+            ja.read( 2, tcosmetics );
+            for( std::pair<const std::string, std::string> &cosm : tcosmetics ) {
+                insert_cosmetic( p, cosm.first, cosm.second );
+            }
+            tcosmetics.clear();
         }
-    } else if( member_name == "camp" ) {
+
+    }
+
+    for( const JsonArray ja : jo.get_array( "spawns" ) ) {
+        // TODO: json should know how to read an string_id
+        const mtype_id type = mtype_id( ja.get_string( 0 ) );
+        int count = ja.get_int( 1 );
+        int i = ja.get_int( 2 );
+        int j = ja.get_int( 3 );
+        const point p( i, j );
+        int faction_id = ja.get_int( 4 );
+        int mission_id = ja.get_int( 5 );
+        bool friendly = ja.get_bool( 6 );
+        std::string name = ja.get_string( 7 );
+        spawn_point tmp( type, count, p, faction_id, mission_id, friendly, name );
+        spawns.push_back( tmp );
+    }
+
+    JsonArray jvehicles = jo.get_array( "vehicles" );
+    for( size_t index = 0; index < jvehicles.size(); ++index ) {
+        std::unique_ptr<vehicle> tmp = std::make_unique<vehicle>();
+        jvehicles.read( index, *tmp );
+        vehicles.push_back( std::move( tmp ) );
+    }
+
+    JsonArray p_cons = jo.get_array( "partial_constructions" );
+    for( size_t index = 0; index < partial_constructions.size(); index += 6 ) {
+
+        partial_con pc;
+        int i = p_cons.get_int( index );
+        int j = p_cons.get_int( index + 1 );
+        int k = p_cons.get_int( index + 2 );
+        tripoint pt = tripoint( i, j, k );
+        pc.counter = p_cons.get_int( index + 3 );
+        if( p_cons.has_int( index + 4 ) ) {
+            // Oops, int id incorrectly saved by legacy code, just load it and hope for the best
+            pc.id = construction_id( p_cons.get_int( index + 4 ) );
+        } else {
+            pc.id = construction_str_id( p_cons.get_string( index + 4 ) ).id();
+        }
+        JsonArray jitems = p_cons.get_array( 5 );
+        for( size_t item_idx = 0; item_idx < jitems.size(); ++item_idx ) {
+            item tmp;
+            jitems.read( item_idx, tmp );
+            pc.components.push_back( tmp );
+        }
+        partial_constructions[pt] = pc;
+    }
+
+    if( jo.has_array( "computers" ) ) {
+        JsonArray jcomputers = jo.get_array( "computers" );
+        for( size_t index = 0; index < jcomputers.size(); index += 2 ) {
+            JsonArray jpoint = jcomputers.get_array( index );
+            point loc{ jpoint.get_int( 0 ), jpoint.get_int( 1 ) };
+            auto new_comp_it = computers.emplace( loc, computer( "BUGGED_COMPUTER", -100 ) ).first;
+            jcomputers.read( index + 1, new_comp_it->second );
+        }
+    } else if( jo.has_member( "computers" ) ) {
+        // only load legacy data here, but do not update to std::map, since
+        // the terrain may not have been loaded yet.
+        legacy_computer = std::make_unique<computer>( "BUGGED_COMPUTER", -100 );
+        jo.read( "computers", *legacy_computer );
+    }
+
+    if( jo.has_member( "camp" ) ) {
         camp = std::make_unique<basecamp>();
-        jsin.read( *camp );
-    } else {
-        jsin.skip_value();
+        jo.read( "camp", *camp );
     }
 }
