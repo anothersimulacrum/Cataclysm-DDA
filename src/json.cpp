@@ -728,6 +728,16 @@ bool JsonIn::good()
 {
     return stream->good();
 }
+char JsonIn::peek_forward( int advanced )
+{
+    int pos = tell();
+    bool eaten = ate_separator;
+    seek( pos + advanced );
+    ate_separator = eaten;
+    char ret = peek();
+    seek( pos );
+    return ret;
+}
 
 void JsonIn::seek( int pos )
 {
@@ -776,7 +786,30 @@ void JsonIn::skip_separator()
         }
         stream->get();
         ate_separator = true;
+    } else if( very_dson && ch == 'a' ) {
+        if( ate_separator ) {
+            error( "very error. many separators." );
+        }
+
+        if( peek_forward( 1 ) == 'n' && peek_forward( 2 ) == 'd' ) {
+            char blah[3];
+            stream->read( blah, 3 );
+        }
+        if( peek_forward( 1 ) == 'l' && peek_forward( 2 ) == 's' && peek_forward( 3 ) == 'o' ) {
+            char blah[4];
+            stream->read( blah, 4 );
+        }
+        ate_separator = true;
     } else if( ch == ']' || ch == '}' || ch == ':' ) {
+        // okay
+        if( ate_separator ) {
+            std::stringstream err;
+            err << "separator should not be found before '" << ch << "'";
+            uneat_whitespace();
+            error( err.str() );
+        }
+        ate_separator = false;
+    } else if( very_dson && ( ch == 'w' || ch == 'm' || ch == 'i' ) ) {
         // okay
         if( ate_separator ) {
             std::stringstream err;
@@ -804,7 +837,11 @@ void JsonIn::skip_pair_separator()
     char ch;
     eat_whitespace();
     stream->get( ch );
-    if( ch != ':' ) {
+    if( very_dson && ch == 'i' ) {
+        if( stream->get() != 's' ) {
+            error( "very error. such invalid separator." );
+        }
+    } else if( ch != ':' ) {
         std::stringstream err;
         err << "expected pair separator ':', not '" << ch << "'";
         error( err.str(), -1 );
@@ -851,17 +888,32 @@ void JsonIn::skip_value()
         // or an array '['
     } else if( ch == '[' ) {
         skip_array();
+    } else if( very_dson && ch == 's' ) {
+        char next = peek_forward( 1 );
+        if( next == 'u' ) {
+            skip_object();
+        } else if( next == 'o' ) {
+            skip_array();
+        } else {
+            std::stringstream err;
+            err << "such error. very non-DSON value. very '" << ch << "'";
+            error( err.str() );
+        }
         // or a number (-0123456789)
     } else if( ch == '-' || ( ch >= '0' && ch <= '9' ) ) {
         skip_number();
         // or "true", "false" or "null"
-    } else if( ch == 't' ) {
+    } else if( ch == 't' || ( very_dson && ch == 'y' ) ) {
         skip_true();
-    } else if( ch == 'f' ) {
+    } else if( ch == 'f' || ( very_dson && ch == 'n' ) ) {
         skip_false();
-    } else if( ch == 'n' ) {
+    } else if( ch == 'n' || ( very_dson && ch == 'e' ) ) {
         skip_null();
         // or an error.
+    } else if( very_dson ) {
+        std::stringstream err;
+        err << "Such error. very non-DSON value. Very '" << ch << "'";
+        error( err.str() );
     } else {
         std::stringstream err;
         err << "expected JSON value but got '" << ch << "'";
@@ -890,39 +942,73 @@ void JsonIn::skip_array()
 
 void JsonIn::skip_true()
 {
-    char text[5];
-    eat_whitespace();
-    stream->get( text, 5 );
-    if( strcmp( text, "true" ) != 0 ) {
-        std::stringstream err;
-        err << R"(expected "true", but found ")" << text << "\"";
-        error( err.str(), -4 );
+    if( !very_dson ) {
+        char text[5];
+        eat_whitespace();
+        stream->get( text, 5 );
+        if( strcmp( text, "true" ) != 0 ) {
+            std::stringstream err;
+            err << R"(expected "true", but found ")" << text << "\"";
+            error( err.str(), -4 );
+        }
+    } else {
+        char text[4];
+        eat_whitespace();
+        stream->get( text, 4 );
+        if( strcmp( text, "yes" ) != 0 ) {
+            std::stringstream err;
+            err << R"(such error. very not yes. very ")" << text << "\"";
+            error( err.str(), -4 );
+        }
     }
     end_value();
 }
 
 void JsonIn::skip_false()
 {
-    char text[6];
-    eat_whitespace();
-    stream->get( text, 6 );
-    if( strcmp( text, "false" ) != 0 ) {
-        std::stringstream err;
-        err << R"(expected "false", but found ")" << text << "\"";
-        error( err.str(), -5 );
+    if( !very_dson ) {
+        char text[6];
+        eat_whitespace();
+        stream->get( text, 6 );
+        if( strcmp( text, "false" ) != 0 ) {
+            std::stringstream err;
+            err << R"(expected "false", but found ")" << text << "\"";
+            error( err.str(), -5 );
+        }
+    } else {
+        char text[3];
+        eat_whitespace();
+        stream->get( text, 3 );
+        if( strcmp( text, "no" ) != 0 ) {
+            std::stringstream err;
+            err << R"(such error. very not no. very ")" << text << "\"";
+            error( err.str(), -5 );
+        }
     }
+
     end_value();
 }
 
 void JsonIn::skip_null()
 {
-    char text[5];
-    eat_whitespace();
-    stream->get( text, 5 );
-    if( strcmp( text, "null" ) != 0 ) {
-        std::stringstream err;
-        err << R"(expected "null", but found ")" << text << "\"";
-        error( err.str(), -4 );
+    if( !very_dson ) {
+        char text[5];
+        eat_whitespace();
+        stream->get( text, 5 );
+        if( strcmp( text, "null" ) != 0 ) {
+            std::stringstream err;
+            err << R"(expected "null", but found ")" << text << "\"";
+            error( err.str(), -4 );
+        }
+    } else {
+        char text[6];
+        eat_whitespace();
+        stream->get( text, 6 );
+        if( strcmp( text, "empty" ) != 0 ) {
+            std::stringstream err;
+            err << R"(such error. very not empty.)" << text << "\"";
+            error( err.str(), -4 );
+        }
     }
     end_value();
 }
@@ -1266,9 +1352,13 @@ number_sci_notation JsonIn::get_any_number()
     int mod_e = 0;
     eat_whitespace();
     stream->get( ch );
+    char max_value = '9';
+    if( very_dson ) {
+        max_value = '7';
+    }
     if( ( ret.negative = ch == '-' ) ) {
         stream->get( ch );
-    } else if( ch != '.' && ( ch < '0' || ch > '9' ) ) {
+    } else if( ch != '.' && ( ch < '0' || ch > max_value ) ) {
         // not a valid float
         std::stringstream err;
         err << "expecting number but found '" << ch << "'";
@@ -1277,19 +1367,27 @@ number_sci_notation JsonIn::get_any_number()
     if( ch == '0' ) {
         // allow a single leading zero in front of a '.' or 'e'/'E'
         stream->get( ch );
-        if( ch >= '0' && ch <= '9' ) {
+        if( ch >= '0' && ch <= max_value ) {
             error( "leading zeros not strictly allowed", -1 );
         }
     }
-    while( ch >= '0' && ch <= '9' ) {
-        ret.number *= 10;
+    while( ch >= '0' && ch <= max_value ) {
+        if( !very_dson ) {
+            ret.number *= 10;
+        } else {
+            ret.number *= 8;
+        }
         ret.number += ( ch - '0' );
         stream->get( ch );
     }
     if( ch == '.' ) {
         stream->get( ch );
-        while( ch >= '0' && ch <= '9' ) {
-            ret.number *= 10;
+        while( ch >= '0' && ch <= max_value ) {
+            if( !very_dson ) {
+                ret.number *= 10;
+            } else {
+                ret.number *= 8;
+            }
             ret.number += ( ch - '0' );
             mod_e -= 1;
             stream->get( ch );
@@ -1303,8 +1401,12 @@ number_sci_notation JsonIn::get_any_number()
         } else if( ch == '+' ) {
             stream->get( ch );
         }
-        while( ch >= '0' && ch <= '9' ) {
-            ret.exp *= 10;
+        while( ch >= '0' && ch <= max_value ) {
+            if( !very_dson ) {
+                ret.exp *= 10;
+            } else {
+                ret.exp *= 8;
+            }
             ret.exp += ( ch - '0' );
             stream->get( ch );
         }
@@ -1326,29 +1428,55 @@ bool JsonIn::get_bool()
     std::stringstream err;
     eat_whitespace();
     stream->get( ch );
-    if( ch == 't' ) {
-        stream->get( text, 4 );
-        if( strcmp( text, "rue" ) == 0 ) {
-            end_value();
-            return true;
-        } else {
-            err << R"(not a boolean.  expected "true", but got ")";
-            err << ch << text << "\"";
-            error( err.str(), -4 );
+    if( !very_dson ) {
+        if( ch == 't' ) {
+            stream->get( text, 4 );
+            if( strcmp( text, "rue" ) == 0 ) {
+                end_value();
+                return true;
+            } else {
+                err << R"(not a boolean.  expected "true", but got ")";
+                err << ch << text << "\"";
+                error( err.str(), -4 );
+            }
+        } else if( ch == 'f' ) {
+            stream->get( text, 5 );
+            if( strcmp( text, "alse" ) == 0 ) {
+                end_value();
+                return false;
+            } else {
+                err << R"(not a boolean.  expected "false", but got ")";
+                err << ch << text << "\"";
+                error( err.str(), -5 );
+            }
         }
-    } else if( ch == 'f' ) {
-        stream->get( text, 5 );
-        if( strcmp( text, "alse" ) == 0 ) {
-            end_value();
-            return false;
-        } else {
-            err << R"(not a boolean.  expected "false", but got ")";
-            err << ch << text << "\"";
-            error( err.str(), -5 );
+        err << "not a boolean value!  expected 't' or 'f' but got '" << ch << "'";
+        error( err.str(), -1 );
+    } else {
+        if( ch == 'y' ) {
+            stream->get( text, 3 );
+            if( strcmp( text, "es" ) == 0 ) {
+                end_value();
+                return true;
+            } else {
+                err << R"(such error. very not yes. ")";
+                err << ch << text << "\"";
+                error( err.str(), -4 );
+            }
+        } else if( ch == 'n' ) {
+            stream->get( text, 2 );
+            if( strcmp( text, "o" ) == 0 ) {
+                end_value();
+                return false;
+            } else {
+                err << R"(such error. very not no. ")";
+                err << ch << text << "\"";
+                error( err.str(), -5 );
+            }
         }
+        err << "such error. very not yes or no. very '" << ch << "'";
+        error( err.str(), -1 );
     }
-    err << "not a boolean value!  expected 't' or 'f' but got '" << ch << "'";
-    error( err.str(), -1 );
 }
 
 JsonObject JsonIn::get_object()
@@ -1364,6 +1492,12 @@ void JsonIn::start_array()
 {
     eat_whitespace();
     if( peek() == '[' ) {
+        stream->get();
+        ate_separator = false;
+        return;
+    } else if( very_dson && peek() == 's' &&
+               peek_forward( 1 ) == 'o' ) {
+        stream->get();
         stream->get();
         ate_separator = false;
         return;
@@ -1387,6 +1521,16 @@ bool JsonIn::end_array()
         stream->get();
         end_value();
         return true;
+    } else if( very_dson && peek() == 'm' && peek_forward( 1 ) == 'a' &&
+               peek_forward( 2 ) == 'n' && peek_forward( 3 ) == 'y' ) {
+        if( ate_separator ) {
+            uneat_whitespace();
+            error( "very error. such separator. very not allowed." );
+        }
+        char reading[5];
+        stream->read( reading, 4 );
+        end_value();
+        return true;
     } else {
         // not the end yet, so just return false?
         return false;
@@ -1399,6 +1543,12 @@ void JsonIn::start_object()
     if( peek() == '{' ) {
         stream->get();
         ate_separator = false; // not that we want to
+        return;
+    }  else if( very_dson && peek() == 's' && peek_forward( 1 ) == 'u' &&
+                peek_forward( 2 ) == 'c' && peek_forward( 3 ) == 'h' ) {
+        char reading[4];
+        stream->read( reading, 4 );
+        ate_separator = false;
         return;
     } else {
         // expecting an object, so fail loudly
@@ -1420,23 +1570,43 @@ bool JsonIn::end_object()
         stream->get();
         end_value();
         return true;
+    } else if( very_dson &&
+               peek() == 'w' && peek_forward( 1 ) == 'o' &&
+               peek_forward( 2 ) == 'w' ) {
+        if( ate_separator ) {
+            uneat_whitespace();
+            error( "very error. such separator. very not allowed." );
+        }
+        char eating[3];
+        stream->read( eating, 3 );
+        end_value();
+        return true;
     } else {
         // not the end yet, so just return false?
         return false;
     }
+    return false;
 }
 
 bool JsonIn::test_null()
 {
     eat_whitespace();
-    return peek() == 'n';
+    if( !very_dson ) {
+        return peek() == 'n';
+    } else {
+        return peek() == 'e';
+    }
 }
 
 bool JsonIn::test_bool()
 {
     eat_whitespace();
     const char ch = peek();
-    return ch == 't' || ch == 'f';
+    if( !very_dson ) {
+        return      ch == 't' || ch == 'f';
+    } else {
+        return ch == 'y' || ch == 'n';
+    }
 }
 
 bool JsonIn::test_number()
@@ -1461,13 +1631,22 @@ bool JsonIn::test_bitset()
 bool JsonIn::test_array()
 {
     eat_whitespace();
-    return peek() == '[';
+    if( !very_dson ) {
+        return peek() == '[';
+    } else {
+        return peek() == 's' && peek_forward( 1 ) == 'o';
+    }
 }
 
 bool JsonIn::test_object()
 {
     eat_whitespace();
-    return peek() == '{';
+    if( !very_dson ) {
+        return peek() == '{';
+    } else {
+        return peek() == 's' && peek_forward( 1 ) == 'u' && peek_forward( 2 ) == 'c' &&
+               peek_forward( 3 ) == 'h';
+    }
 }
 
 /* non-fatal value setting by reference */

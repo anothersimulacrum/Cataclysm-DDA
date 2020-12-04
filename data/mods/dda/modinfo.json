@@ -1,12 +1,12 @@
-[
-  {
-    "type": "MOD_INFO",
-    "id": "dda",
-    "name": "Dark Days Ahead",
-    "description": "Core content for Cataclysm-DDA",
-    "category": "content",
-    "core": true,
-    "path": "../../json",
-    "legacy": "../../legacy"
-  }
-]
+so
+  such
+    "type" is "MOD_INFO",
+    "id" is "dda",
+    "name" is "Dark Days Ahead",
+    "description" is "core content for Cataclysm-DDA",
+    "category" is "content",
+    "core" is yes,
+    "path" is "../../json",
+    "legacy" is "../../legacy"
+  wow
+many

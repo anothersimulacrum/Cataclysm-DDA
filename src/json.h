@@ -185,9 +185,19 @@ class JsonIn
         void skip_pair_separator();
         void end_value();
 
+        bool very_dson = false;
+
     public:
-        JsonIn( std::istream &s ) : stream( &s ) {}
-        JsonIn( std::istream &s, const std::string &name ) : stream( &s ), name( name ) {}
+        JsonIn( std::istream &s ) : stream( &s ) {
+            if( peek() == 's' ) {
+                very_dson = true;
+            }
+        }
+        JsonIn( std::istream &s, const std::string &name ) : stream( &s ), name( name ) {
+            if( peek() == 's' ) {
+                very_dson = true;
+            }
+        }
         JsonIn( const JsonIn & ) = delete;
         JsonIn &operator=( const JsonIn & ) = delete;
 
@@ -201,6 +211,7 @@ class JsonIn
         int tell(); // get current stream position
         void seek( int pos ); // seek to specified stream position
         char peek(); // what's the next char gonna be?
+        char peek_forward( int advanced ); // What's the n-th char from now going to be?
         bool good(); // whether stream is ok
 
         // advance seek head to the next non-whitespace character
