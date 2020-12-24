@@ -867,8 +867,16 @@ void Character::craft_skill_gain( const item &craft, const int &multiplier )
         // Normalize experience gain to crafting time, giving a bonus for longer crafting
         const double batch_mult = batch_size + base_time_to_craft( making, batch_size ) / 30000.0;
         // This is called after every 5% crafting progress, so divide by 20
-        const int base_practice = roll_remainder( ( making.difficulty * 15 + 10 ) * batch_mult /
-                                  20.0 ) * multiplier;
+        int base_practice = roll_remainder( ( making.difficulty * 15 + 10 ) * batch_mult /
+                                            20.0 ) * multiplier;
+        const int pct_practice = base_practice * 0.05;
+
+        for( const std::pair<const skill_id, int> &skill : making.required_skills ) {
+            const int cap = static_cast<int>( skill.second * 1.25 );
+            practice( skill.first, pct_practice, cap, true );
+            base_practice -= pct_practice;
+        }
+
         const int skill_cap = static_cast<int>( making.difficulty * 1.25 );
         practice( making.skill_used, base_practice, skill_cap, true );
 
@@ -878,6 +886,10 @@ void Character::craft_skill_gain( const item &craft, const int &multiplier )
             if( helper->get_skill_level( making.skill_used ) >= making.difficulty ) {
                 helper->practice( making.skill_used, roll_remainder( base_practice / 2.0 ),
                                   skill_cap );
+                for( const std::pair<const skill_id, int> &skill : making.required_skills ) {
+                    const int cap = static_cast<int>( skill.second * 1.25 );
+                    practice( skill.first, roll_remainder( pct_practice / 2.0 ), cap, true );
+                }
                 if( batch_size > 1 && one_in( 3 ) ) {
                     add_msg( m_info, _( "%s assists with crafting…" ), helper->name );
                 }
@@ -888,6 +900,10 @@ void Character::craft_skill_gain( const item &craft, const int &multiplier )
             } else {
                 helper->practice( making.skill_used, roll_remainder( base_practice / 10.0 ),
                                   skill_cap );
+                for( const std::pair<const skill_id, int> &skill : making.required_skills ) {
+                    const int cap = static_cast<int>( skill.second * 1.25 );
+                    practice( skill.first, pct_practice, cap, true );
+                }
                 if( one_in( 3 ) ) {
                     add_msg( m_info, _( "%s watches you craft…" ), helper->name );
                 }
