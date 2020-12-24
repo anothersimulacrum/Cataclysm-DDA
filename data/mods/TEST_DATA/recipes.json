@@ -20,5 +20,69 @@
       [ [ "duct_tape", 10 ] ],
       [ [ "cable", 5 ] ]
     ]
+  },
+  {
+    "result": "armor_blarmor",
+    "id_suffix": "test_all_prof",
+    "type": "recipe",
+    "activity_level": "LIGHT_EXERCISE",
+    "category": "CC_ARMOR",
+    "subcategory": "CSC_ARMOR_SUIT",
+    "skill_used": "chemistry",
+    "difficulty": 4,
+    "skills_required": [ "tailor", 3 ],
+    "time": "1 h",
+    "book_learn": [
+      [ "textbook_tailor", 4 ],
+      [ "tailor_portfolio", 5 ],
+      [ "textbook_survival", 3 ],
+      [ "trappers_companion", 3 ],
+      [ "survival_book", 3 ],
+      [ "textbook_armwest", 6 ],
+      [ "textbook_armschina", 6 ]
+    ],
+    "using": [ [ "sewing_standard", 4 ] ],
+    "proficiencies": [
+      { "proficiency": "prof_articulation" },
+      { "proficiency": "prof_tanning_basic" },
+      { "proficiency": "prof_tanning" },
+      { "proficiency": "prof_leatherworking_basic" }
+    ],
+    "qualities": [ { "id": "COOK", "level": 3 }, { "id": "LEATHER_AWL", "level": 1 } ],
+    "tools": [ [ [ "surface_heat", 20, "LIST" ] ] ],
+    "components": [
+      [ [ "water", 10 ], [ "water_clean", 10 ] ],
+      [ [ "wax", 2 ], [ "any_tallow", 8, "LIST" ], [ "vinegar", 10 ], [ "pine_bough", 20 ] ],
+      [ [ "salt", 50 ] ],
+      [ [ "armor_larmor", 1 ] ],
+      [ [ "armguard_larmor", 1 ] ]
+    ]
+  },
+  {
+    "type": "recipe",
+    "activity_level": "LIGHT_EXERCISE",
+    "result": "pumpkin_muffins",
+    "id_suffix": "test_skills",
+    "category": "CC_FOOD",
+    "subcategory": "CSC_FOOD_BREAD",
+    "skill_used": "cooking",
+    "difficulty": 3,
+    "charges": 24,
+    "time": "30 m",
+    "batch_time_factors": [ 50, 4 ],
+    "book_learn": [ [ "family_cookbook", 3 ], [ "baking_book", 2 ], [ "cookbook", 3 ] ],
+    "qualities": [ { "id": "COOK", "level": 3 } ],
+    "tools": [ [ [ "surface_heat", 8, "LIST" ] ] ],
+    "components": [
+      [ [ "flour", 4 ] ],
+      [ [ "yeast", 2 ] ],
+      [ [ "apple_cider", 2 ], [ "apple", 2 ], [ "irradiated_apple", 2 ] ],
+      [ [ "pumpkin", 2 ], [ "irradiated_pumpkin", 2 ] ],
+      [ [ "sugar", 4 ], [ "artificial_sweetener", 4 ] ],
+      [ [ "powder_eggs", 2 ], [ "eggs_bird", 2, "LIST" ], [ "egg_reptile", 2 ] ],
+      [ [ "any_butter_or_oil", 2, "LIST" ] ],
+      [ [ "salt", 2 ] ],
+      [ [ "cinnamon", 2 ] ]
+    ]
   }
 ]

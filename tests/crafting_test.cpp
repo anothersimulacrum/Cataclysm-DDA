@@ -292,6 +292,68 @@ TEST_CASE( "crafting_with_a_companion", "[.]" )
     }
 }
 
+static double cummulative_success( const Character &guy, const recipe_id &tested,
+                                   int iters = 10000 )
+{
+    double accumulator = 0.0;
+    const recipe &made = *tested;
+
+    for( int i = 0; i < iters; ++i ) {
+        accumulator += guy.crafting_success_roll( made );
+    }
+    return accumulator / iters;
+}
+
+static void test_recipe( const recipe_id &tested, const float margin, float useless, float primary,
+                         float skilled,
+                         float proficient )
+{
+    clear_avatar();
+    avatar &guy = get_avatar();
+    const recipe &making = *tested;
+
+    INFO( tested.str() );
+    REQUIRE( guy.focus_pool == 100 );
+
+    const float useless_chances = cummulative_success( guy, tested );
+
+    guy.set_skill_level( making.skill_used, making.difficulty );
+    const float primary_chances = cummulative_success( guy, tested );
+
+    for( const std::pair<const skill_id, int> skill : making.required_skills ) {
+        guy.set_skill_level( skill.first, skill.second );
+    }
+    const float skilled_chances = cummulative_success( guy, tested );
+
+    for( const recipe_proficiency &prof : making.proficiencies ) {
+        guy.add_proficiency( prof.id );
+    }
+    const float proficient_chances = cummulative_success( guy, tested );
+
+    INFO( string_format( "Useless margin: %g", useless_chances - useless ) );
+    INFO( string_format( "Primary margin: %g", primary_chances - primary ) );
+    INFO( string_format( "Skilled margin: %g", skilled_chances - skilled ) );
+    INFO( string_format( "Proficient margin: %g", proficient_chances - proficient ) );
+
+    CHECK( useless_chances == Approx( useless ).margin( margin ) );
+    CHECK( primary_chances == Approx( primary ).margin( margin ) );
+    CHECK( skilled_chances == Approx( skilled ).margin( margin ) );
+    CHECK( proficient_chances == Approx( proficient ).margin( margin ) );
+
+    CHECK( useless_chances <= Approx( primary_chances ).margin( margin * 2 ) );
+    CHECK( primary_chances <= Approx( skilled_chances ).margin( margin * 2 ) );
+    CHECK( skilled_chances <= Approx( proficient_chances ).margin( margin * 2 ) );
+}
+
+TEST_CASE( "character_without_skills_recipe_sucess", "[crafting][crafting_failure]" )
+{
+    for( int i = 0; i < 1000; ++i ) {
+        test_recipe( recipe_id( "armor_blarmor_test_all_prof" ), 0.0275f, 0.0f, 0.0f, 0.0f, 1.005f );
+        test_recipe( recipe_id( "test_soldering_iron" ), 0.0645f, 0.8f, 1.4f, 1.4f, 1.4f );
+        test_recipe( recipe_id( "pumpkin_muffins_test_skills" ), 0.052f, 0.27f, 1.0f, 1.0f, 1.0f );
+    }
+}
+
 static void prep_craft( const recipe_id &rid, const std::vector<item> &tools,
                         bool expect_craftable )
 {
