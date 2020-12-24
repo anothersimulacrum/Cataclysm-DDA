@@ -74,6 +74,7 @@ void clear_character( player &dummy )
     dummy.environmental_revert_effect();
 
     dummy.empty_skills();
+    dummy.clear_proficiencies();
     dummy.martial_arts_data->clear_styles();
     dummy.clear_morale();
     dummy.clear_bionics();

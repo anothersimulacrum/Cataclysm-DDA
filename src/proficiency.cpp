@@ -350,6 +350,12 @@ void proficiency_set::deserialize_legacy( const JsonArray &jo )
     }
 }
 
+void proficiency_set::clear()
+{
+    known.clear();
+    learning.clear();
+}
+
 void learning_proficiency::serialize( JsonOut &jsout ) const
 {
     jsout.start_object();

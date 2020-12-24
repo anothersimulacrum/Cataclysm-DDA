@@ -92,6 +92,8 @@ class proficiency_set
         void serialize( JsonOut &jsout ) const;
         void deserialize( JsonIn &jsin );
         void deserialize_legacy( const JsonArray &jo );
+
+        void clear();
 };
 
 struct learning_proficiency {

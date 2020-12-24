@@ -1811,6 +1811,7 @@ class Character : public Creature, public visitable<Character>
         std::vector<display_proficiency> display_proficiencies() const;
         std::vector<proficiency_id> known_proficiencies() const;
         std::vector<proficiency_id> learning_proficiencies() const;
+        void clear_proficiencies();
 
         // --------------- Other Stuff ---------------
 

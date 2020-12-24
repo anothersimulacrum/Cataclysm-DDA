@@ -12574,6 +12574,11 @@ std::vector<proficiency_id> Character::learning_proficiencies() const
     return _proficiencies->learning_profs();
 }
 
+void Character::clear_proficiencies()
+{
+    return _proficiencies->clear();
+}
+
 bool Character::defer_move( const tripoint &next )
 {
     // next must be adjacent to current pos
