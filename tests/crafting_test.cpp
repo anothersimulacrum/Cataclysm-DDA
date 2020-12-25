@@ -305,8 +305,7 @@ static double cummulative_success( const Character &guy, const recipe_id &tested
 }
 
 static void test_recipe( const recipe_id &tested, const float margin, float useless, float primary,
-                         float skilled,
-                         float proficient )
+                         float skilled, float proficient, float overskilled )
 {
     clear_avatar();
     avatar &guy = get_avatar();
@@ -330,28 +329,51 @@ static void test_recipe( const recipe_id &tested, const float margin, float usel
     }
     const float proficient_chances = cummulative_success( guy, tested );
 
+    guy.set_skill_level( making.skill_used, making.difficulty + 1 );
+    for( const std::pair<const skill_id, int> skill : making.required_skills ) {
+        guy.set_skill_level( skill.first, skill.second + 1 );
+    }
+    const float overskill_chances = cummulative_success( guy, tested );
+
     INFO( string_format( "Useless margin: %g", useless_chances - useless ) );
     INFO( string_format( "Primary margin: %g", primary_chances - primary ) );
     INFO( string_format( "Skilled margin: %g", skilled_chances - skilled ) );
     INFO( string_format( "Proficient margin: %g", proficient_chances - proficient ) );
+    INFO( string_format( "Proficient margin: %g", overskill_chances - overskilled ) );
 
     CHECK( useless_chances == Approx( useless ).margin( margin ) );
     CHECK( primary_chances == Approx( primary ).margin( margin ) );
     CHECK( skilled_chances == Approx( skilled ).margin( margin ) );
     CHECK( proficient_chances == Approx( proficient ).margin( margin ) );
+    CHECK( overskill_chances == Approx( overskilled ).margin( margin ) );
 
     CHECK( useless_chances <= Approx( primary_chances ).margin( margin * 2 ) );
     CHECK( primary_chances <= Approx( skilled_chances ).margin( margin * 2 ) );
     CHECK( skilled_chances <= Approx( proficient_chances ).margin( margin * 2 ) );
+    CHECK( proficient_chances <= Approx( overskill_chances ).margin( margin * 2 ) );
+}
+
+TEST_CASE( "fakeme", "[normal_roll]" )
+{
+    float max_margin = 0.0f;
+    float margin = 0.05;
+    for( int i = 0; i < 1000000; ++i ) {
+        float total = 0.0f;
+        for( int i = 0; i < 10000; ++i ) {
+            total += normal_roll( 0, 1 );
+        }
+        total /= 10000;
+        max_margin = std::max( max_margin, std::abs( total - 0.0f ) );
+        CHECK( total == Approx( 0.0 ).margin( margin ) );
+    }
+    CHECK( max_margin <= margin );
 }
 
 TEST_CASE( "character_without_skills_recipe_sucess", "[crafting][crafting_failure]" )
 {
-    for( int i = 0; i < 1000; ++i ) {
-        test_recipe( recipe_id( "armor_blarmor_test_all_prof" ), 0.0275f, 0.0f, 0.0f, 0.0f, 1.005f );
-        test_recipe( recipe_id( "test_soldering_iron" ), 0.0645f, 0.8f, 1.4f, 1.4f, 1.4f );
-        test_recipe( recipe_id( "pumpkin_muffins_test_skills" ), 0.052f, 0.27f, 1.0f, 1.0f, 1.0f );
-    }
+    test_recipe( recipe_id( "armor_blarmor_test_all_prof" ), 0.03, 0.0f, 0.0f, 0.0f, 1.005f, 1.263f );
+    test_recipe( recipe_id( "test_soldering_iron" ), 0.065f, 0.8f, 1.4f, 1.4f, 1.4f, 2.164f );
+    test_recipe( recipe_id( "pumpkin_muffins_test_skills" ), 0.054f, 0.27f, 1.0f, 1.0f, 1.0f, 1.34f );
 }
 
 static void prep_craft( const recipe_id &rid, const std::vector<item> &tools,
