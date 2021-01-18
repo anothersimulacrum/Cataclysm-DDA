@@ -28,7 +28,7 @@ struct iexamine_actor {
     explicit iexamine_actor( const std::string &type ) : type( type ) {}
 
     virtual void load( const JsonObject & ) = 0;
-    virtual void call( player &, const tripoint & ) const = 0;
+    virtual void call( player *, const tripoint & ) const = 0;
     virtual void finalize() const = 0;
 
     virtual std::unique_ptr<iexamine_actor> clone() const = 0;
