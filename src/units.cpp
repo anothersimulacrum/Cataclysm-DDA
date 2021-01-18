@@ -51,6 +51,12 @@ void energy::deserialize( JsonIn &jsin )
 }
 
 template<>
+void volume::deserialize( JsonIn &jsin )
+{
+    *this = read_from_json_string( jsin, units::volume_units );
+}
+
+template<>
 void angle::serialize( JsonOut &jsout ) const
 {
     jsout.write( string_format( "%f rad", value_ ) );
