@@ -72,10 +72,11 @@ bool cardreader_examine_actor::apply( const tripoint &examp ) const
 /**
  * Use id/hack reader. Using an id despawns turrets.
  */
-void cardreader_examine_actor::call( player &guy, const tripoint &examp ) const
+void cardreader_examine_actor::call( player *guyp, const tripoint &examp ) const
 {
     bool open = false;
     map &here = get_map();
+    player &guy = *guyp;
 
     bool has_item = false;
     for( const flag_id &flag : allowed_flags ) {
