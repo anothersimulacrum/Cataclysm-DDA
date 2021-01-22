@@ -330,6 +330,57 @@ void crafter_examine_actor::show_options( player &guy, const tripoint &examp ) c
     }
 }
 
+void crafter_examine_actor::display_info( player &, const tripoint &examp ) const
+{
+    std::string display;
+    map_stack items_here = get_map().i_at( examp );
+
+    if( active ) {
+        display += colorize( active_str.translated(), c_green ) + "\n";
+        time_duration time_left = 0_turns;
+        for( const item &it : items_here ) {
+            if( it.typeId() == fake_item ) {
+                time_left = time_duration::from_turns( it.item_counter );
+            }
+        }
+        display += string_format( _( "It will take about %s to finish." ), to_string( time_left ) ) + "\n";
+
+    } else {
+        display += colorize( string_format( _( "There is a %s here." ), name.translated() ),
+                             c_green ) + "\n";
+    }
+
+    display += colorize( _( "You inspect the contents and find: " ), c_green ) + "\n";
+
+
+    if( items_here.empty() ) {
+        display += _( "…that it is empty." );
+    } else {
+        for( const item &it : items_here ) {
+            display += string_format( "-> %s (%d)\n", item::nname( it.typeId(), it.charges ), it.charges );
+        }
+    }
+
+    popup( display, PF_NONE );
+}
+
+void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) const
+{
+    if( active ) {
+        guy.add_msg_if_player( no_load_active_msg.translated() );
+    }
+
+    inventory inv = guy.crafting_inventory();
+    inv.remove_items_with( []( const item & it ) {
+        return it.rotten();
+    } );
+    std::vector<const item *> filtered = inv.items_with( []( const item & it ) {
+        return it.has_flag( processing_flag );
+    } );
+
+    std::vector
+}
+
 void crafter_examine_actor::load( const JsonObject &jo )
 {
     mandatory( jo, false, "active", active );

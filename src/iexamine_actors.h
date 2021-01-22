@@ -100,6 +100,7 @@ class crafter_examine_actor : public iexamine_actor
         translation reload_desc;
         translation disassemble_msg;
         translation remove_fuel_msg;
+        translation active_str;
 
         void process( const tripoint &examp ) const;
         void show_options( player &guy, const tripoint &examp ) const;
