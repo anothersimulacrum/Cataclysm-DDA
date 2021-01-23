@@ -101,6 +101,10 @@ class crafter_examine_actor : public iexamine_actor
         translation disassemble_msg;
         translation remove_fuel_msg;
         translation active_str;
+        translation no_load_active_msg;
+        translation load_query_msg;
+
+        units::volume free_volume() const;
 
         void process( const tripoint &examp ) const;
         void show_options( player &guy, const tripoint &examp ) const;
