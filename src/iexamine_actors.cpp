@@ -10,6 +10,7 @@
 #include "messages.h"
 #include "output.h"
 #include "player.h"
+#include "string_input_popup.h"
 #include "units_utility.h"
 
 ////////////////// Cardreader /////////////////////////////
@@ -364,6 +365,11 @@ void crafter_examine_actor::display_info( player &, const tripoint &examp ) cons
     popup( display, PF_NONE );
 }
 
+static bool is_non_rotten_crafting_component( const item &it )
+{
+    return is_crafting_component( it ) && !it.rotten();
+}
+
 void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) const
 {
     if( active ) {
@@ -374,11 +380,70 @@ void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) con
     inv.remove_items_with( []( const item & it ) {
         return it.rotten();
     } );
-    std::vector<const item *> filtered = inv.items_with( []( const item & it ) {
+    std::vector<item *> filtered = inv.items_with( [this]( const item & it ) {
         return it.has_flag( processing_flag );
     } );
 
-    std::vector
+    std::vector<itype_id> candidates;
+
+    for( const item *usable : filtered ) {
+        int count;
+        const itype_id used = usable->typeId();
+        if( usable->count_by_charges() ) {
+            count = inv.charges_of( used );
+        } else {
+            count = inv.amount_of( used );
+        }
+        if( count > 0 && std::find( candidates.begin(), candidates.end(), used ) == candidates.end() ) {
+            candidates.push_back( used );
+        }
+    }
+
+    uilist selection_menu;
+    selection_menu.text = load_query_msg.translated();
+    for( const itype_id &it : candidates ) {
+        selection_menu.addentry( it->nname( 1 ) );
+    }
+
+    int selected = selection_menu.ret;
+    if( selected < 0 || static_cast<size_t>( selected ) >= candidates.size() ) {
+        add_msg( _( "Never mind." ) );
+        return;
+    }
+
+    const itype_id &chosen = candidates[selected];
+    int count;
+    if( chosen->count_by_charges() ) {
+        count = inv.charges_of( chosen );
+    } else {
+        count = inv.amount_of( chosen );
+    }
+    count = std::min( count, item( chosen ).base_volume() / free_volume() );
+    const std::string message = string_format( _( "Insert how many of the %s?" ), chosen->nname( 1 ) );
+    int amount = string_input_popup().title( message ).text( to_string( count ) ).only_digits(
+                     true ).query_int();
+
+    if( amount == 0 ) {
+        add_msg( _( "Never mind." ) );
+        return;
+    } else if( amount > count ) {
+        amount = count;
+    }
+
+    std::vector<item_comp> comps;
+    comps.push_back( item_comp( chosen, amount ) );
+
+    comp_selection<item_comp> selected_comps = guy.select_item_component( comps, 1, inv, true,
+            is_non_rotten_crafting_component );
+    std::list<item> removed = guy.consume_items( selected_comps, 1, is_non_rotten_crafting_component );
+
+    for( const item &current : removed ) {
+        get_map().add_item( examp, current );
+        guy.mod_moves( -guy.item_handling_cost( current ) );
+        add_msg( m_info, _( "You place %d %s in the %s." ), amount, item::nname( current.typeId(), amount ),
+                 name.translated() );
+    }
+    guy.invalidate_crafting_inventory();
 }
 
 void crafter_examine_actor::load( const JsonObject &jo )
