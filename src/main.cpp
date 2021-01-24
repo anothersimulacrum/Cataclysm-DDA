@@ -40,6 +40,8 @@
 #include "translations.h"
 #include "type_id.h"
 
+#include "reprocase.h"
+
 class ui_adaptor;
 
 #if defined(TILES)
@@ -690,6 +692,8 @@ int main( int argc, const char *argv[] )
     }
 #endif
     replay_buffered_debugmsg_prompts();
+
+    trigger_memory_leak();
 
     while( true ) {
         if( !cli.world.empty() ) {
