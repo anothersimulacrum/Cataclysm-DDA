@@ -11,6 +11,7 @@
 #include "units.h"
 
 class Character;
+class inventory;
 
 class cardreader_examine_actor : public iexamine_actor
 {
@@ -109,6 +110,8 @@ class crafter_examine_actor : public iexamine_actor
         void process( const tripoint &examp ) const;
         void show_options( player &guy, const tripoint &examp ) const;
         int query_options( player &guy, const tripoint &examp ) const;
+
+        cata::optional<itype_id> select_item_to_load( inventory &inv ) const;
 
         void transform( const tripoint &examp ) const;
         void disassemble( const tripoint &examp ) const;
