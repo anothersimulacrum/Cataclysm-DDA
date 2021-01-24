@@ -370,13 +370,8 @@ static bool is_non_rotten_crafting_component( const item &it )
     return is_crafting_component( it ) && !it.rotten();
 }
 
-void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) const
+cata::optional<itype_id> crafter_examine_actor::select_item_to_load( inventory &inv ) const
 {
-    if( active ) {
-        guy.add_msg_if_player( no_load_active_msg.translated() );
-    }
-
-    inventory inv = guy.crafting_inventory();
     inv.remove_items_with( []( const item & it ) {
         return it.rotten();
     } );
@@ -405,13 +400,27 @@ void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) con
         selection_menu.addentry( it->nname( 1 ) );
     }
 
-    int selected = selection_menu.ret;
+    const int selected = selection_menu.ret;
     if( selected < 0 || static_cast<size_t>( selected ) >= candidates.size() ) {
         add_msg( _( "Never mind." ) );
-        return;
+        return cata::nullopt;
     }
 
-    const itype_id &chosen = candidates[selected];
+    return candidates[selected];
+}
+
+void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) const
+{
+    if( active ) {
+        guy.add_msg_if_player( no_load_active_msg.translated() );
+    }
+
+    inventory inv = guy.crafting_inventory();
+    cata::optional<itype_id> which = select_item_to_load( inv );
+    if( !which ) {
+        return;
+    }
+    const itype_id chosen = *which;
     int count;
     if( chosen->count_by_charges() ) {
         count = inv.charges_of( chosen );
@@ -443,7 +452,32 @@ void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) con
         add_msg( m_info, _( "You place %d %s in the %s." ), amount, item::nname( current.typeId(), amount ),
                  name.translated() );
     }
+
     guy.invalidate_crafting_inventory();
+}
+
+void crafter_examine_actor::insert_fuel(player &guy, const tripoint &examp) const
+{
+	iexamine::reload_furniture(guy,examp);
+}
+
+void crafter_examine_actor::activate(player &guy, const tripoint &examp) const
+{
+	map &here = get_map();
+
+
+	std::vector<item *> rejects;
+	item *fuel_item = nullptr;
+	for( const item &it : here.i_at(examp) ) {
+		if( it.typeId() == fake_item ) {
+			continue;
+		}
+		if( !it.has_flag( processing_flag ) ) {
+			rejects.push_back( &it );
+		}
+	}
+
+	if( 
 }
 
 void crafter_examine_actor::load( const JsonObject &jo )
