@@ -456,28 +456,28 @@ void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) con
     guy.invalidate_crafting_inventory();
 }
 
-void crafter_examine_actor::insert_fuel(player &guy, const tripoint &examp) const
+void crafter_examine_actor::insert_fuel( player &guy, const tripoint &examp ) const
 {
-	iexamine::reload_furniture(guy,examp);
+    iexamine::reload_furniture( guy, examp );
 }
 
-void crafter_examine_actor::activate(player &guy, const tripoint &examp) const
+void crafter_examine_actor::activate( player &guy, const tripoint &examp ) const
 {
-	map &here = get_map();
+    map &here = get_map();
 
 
-	std::vector<item *> rejects;
-	item *fuel_item = nullptr;
-	for( const item &it : here.i_at(examp) ) {
-		if( it.typeId() == fake_item ) {
-			continue;
-		}
-		if( !it.has_flag( processing_flag ) ) {
-			rejects.push_back( &it );
-		}
-	}
+    std::vector<item *> rejects;
+    item *fuel_item = nullptr;
+    for( const item &it : here.i_at( examp ) ) {
+        if( it.typeId() == fake_item ) {
+            continue;
+        }
+        if( !it.has_flag( processing_flag ) ) {
+            rejects.push_back( &it );
+        }
+    }
 
-	if( 
+    if(
 }
 
 void crafter_examine_actor::load( const JsonObject &jo )
