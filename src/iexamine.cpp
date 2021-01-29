@@ -3848,21 +3848,22 @@ static int count_charges_in_list( const itype *type, const map_stack &items )
     return 0;
 }
 
-std::pair<const itype *, const itype *> furniture_crafting_ammo_info( const tripoint &examp )
+static std::pair<const itype *, const itype *> furniture_crafting_ammo_info( const tripoint &examp )
 {
-    const furn_t &f = *here.furn( examp );
+    const furn_t &f = *get_map().furn( examp );
     const itype *type = f.crafting_pseudo_item_type();
     const itype *ammo = f.crafting_ammo_item_type();
 
-    return <type, ammo>;
+    return {type, ammo};
 }
 
 void iexamine::reload_furniture( player &p, const tripoint &examp )
 {
     map &here = get_map();
-    const std::pair<const itype *, const itype *> ammo_info;
+    const std::pair<const itype *, const itype *> ammo_info = furniture_crafting_ammo_info( examp );
     const itype *type = ammo_info.first;
     const itype *ammo = ammo_info.second;
+    const furn_t &f = *here.furn( examp );
     if( type == nullptr || ammo == nullptr || !ammo->ammo ) {
         add_msg( m_info, _( "This %s can not be reloaded!" ), f.name() );
         return;

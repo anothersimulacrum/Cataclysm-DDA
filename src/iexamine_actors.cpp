@@ -461,13 +461,13 @@ void crafter_examine_actor::insert_fuel( player &guy, const tripoint &examp ) co
     iexamine::reload_furniture( guy, examp );
 }
 
-void crafter_examine_actor::activate( player &guy, const tripoint &examp ) const
+void crafter_examine_actor::activate( player &, const tripoint &examp ) const
 {
     map &here = get_map();
 
 
-    std::vector<item *> rejects;
-    item *fuel_item = nullptr;
+    std::vector<const item *> rejects;
+    //item *fuel_item = nullptr;
     for( const item &it : here.i_at( examp ) ) {
         if( it.typeId() == fake_item ) {
             continue;
@@ -477,7 +477,37 @@ void crafter_examine_actor::activate( player &guy, const tripoint &examp ) const
         }
     }
 
-    if(
+    if( !rejects.empty() ) {
+        add_msg( m_info, _( "The %s cannot be activated while it contains %s!" ), name.translated(),
+        enumerate_as_string( rejects.begin(), rejects.end(), []( const item * rejected ) {
+            return rejected->tname();
+        } ) );
+    }
+}
+
+void crafter_examine_actor::process( const tripoint & ) const
+{
+}
+
+void crafter_examine_actor::transform( const tripoint & ) const
+{
+}
+
+void crafter_examine_actor::disassemble( const tripoint & ) const
+{
+}
+
+void crafter_examine_actor::remove_items( player &, const tripoint & ) const
+{
+}
+
+void crafter_examine_actor::remove_fuel( player &, const tripoint & ) const
+{
+}
+
+units::volume crafter_examine_actor::free_volume() const
+{
+    return 0_liter;
 }
 
 void crafter_examine_actor::load( const JsonObject &jo )
