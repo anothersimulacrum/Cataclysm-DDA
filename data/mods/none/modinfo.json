@@ -1,0 +1,10 @@
+[
+  {
+    "type": "MOD_INFO",
+    "id": "none",
+    "name": "Nothing",
+    "description": "Core content alternative for Cataclysm-DDA",
+    "category": "content",
+    "core": true
+  }
+]
