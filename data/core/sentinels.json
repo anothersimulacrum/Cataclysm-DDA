@@ -42,5 +42,28 @@
     "type": "field_type",
     "legacy_enum_id": 0,
     "intensity_levels": [ { "name": "nothing" } ]
+  },
+  {
+	  "type": "terrain",
+	  "id": "t_null",
+	  "name": "nothing",
+	  "description": "",
+	  "symbol": " ",
+	  "color": "white",
+	  "light_emitted": 0,
+	  "move_cost": 0,
+	  "flags": [ "TRANSPARENT", "DIGGABLE" ]
+  },
+  {
+	  "type": "furniture",
+	  "id": "f_null",
+	  "name": "nothing",
+	  "description": "",
+	  "symbol": " ",
+	  "color": "white",
+	  "light_emitted": 0,
+	  "move_cost_mod": 0,
+	  "required_str": -1,
+	  "flags": [ "TRANSPARENT", "DIGGABLE" ]
   }
 ]
