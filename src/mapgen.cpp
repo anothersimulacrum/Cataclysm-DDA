@@ -3072,7 +3072,7 @@ void map::draw_lab( mapgendata &dat )
             const auto maybe_insert_stairs = [this]( const oter_id & terrain,  const ter_id & t_stair_type ) {
                 if( is_ot_match( "stairs", terrain, ot_match_type::contains ) ) {
                     const auto predicate = [this]( const tripoint & p ) {
-                        return ter( p ) == t_thconc_floor && furn( p ) == f_null && tr_at( p ).is_null();
+                        return ter( p ) == t_thconc_floor && furn( p ) == f_str_null && tr_at( p ).is_null();
                     };
                     const auto range = points_in_rectangle( { 0, 0, abs_sub.z }, { SEEX * 2 - 2, SEEY * 2 - 2, abs_sub.z } );
 
@@ -3901,7 +3901,7 @@ void map::draw_lab( mapgendata &dat )
         const auto maybe_insert_stairs = [this]( const oter_id & terrain,  const ter_id & t_stair_type ) {
             if( is_ot_match( "stairs", terrain, ot_match_type::contains ) ) {
                 const auto predicate = [this]( const tripoint & p ) {
-                    return ter( p ) == t_thconc_floor && furn( p ) == f_null &&
+                    return ter( p ) == t_thconc_floor && furn( p ) == f_str_null &&
                            tr_at( p ).is_null();
                 };
                 const auto range = points_in_rectangle( { 0, 0, abs_sub.z },

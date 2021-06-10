@@ -53,8 +53,8 @@ bool cardreader_examine_actor::apply( const tripoint &examp ) const
         open = false;
         const tripoint_range<tripoint> points = here.points_in_radius( examp, radius );
         for( const tripoint &tmp : points ) {
-            const auto ter_iter = terrain_changes.find( here.ter( tmp ).id() );
-            const auto furn_iter = furn_changes.find( here.furn( tmp ).id() );
+            const auto ter_iter = terrain_changes.find( here.ter( tmp ) );
+            const auto furn_iter = furn_changes.find( here.furn( tmp ) );
             if( ter_iter != terrain_changes.end() ) {
                 here.ter_set( tmp, ter_iter->second );
                 open = true;

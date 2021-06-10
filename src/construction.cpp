@@ -158,10 +158,10 @@ static bool has_pre_terrain( const construction &con, const tripoint &p )
 
     map &here = get_map();
     if( con.pre_is_furniture ) {
-        furn_id f = furn_id( con.pre_terrain );
+        furn_str_id f = furn_str_id( con.pre_terrain );
         return here.furn( p ) == f;
     } else {
-        ter_id t = ter_id( con.pre_terrain );
+        ter_str_id t = ter_str_id( con.pre_terrain );
         return here.ter( p ) == t;
     }
 }
@@ -904,10 +904,10 @@ bool can_construct( const construction &con, const tripoint &p )
     if( !con.post_terrain.empty() ) {
         map &here = get_map();
         if( con.post_is_furniture ) {
-            furn_id f = furn_id( con.post_terrain );
+            furn_str_id f = furn_str_id( con.post_terrain );
             place_okay &= here.furn( p ) != f;
         } else {
-            ter_id t = ter_id( con.post_terrain );
+            ter_str_id t = ter_str_id( con.post_terrain );
             place_okay &= here.ter( p ) != t;
         }
     }

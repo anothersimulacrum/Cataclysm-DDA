@@ -1319,23 +1319,23 @@ std::string map::obstacle_name( const tripoint &p )
 
 bool map::has_furn( const tripoint &p ) const
 {
-    return furn( p ) != f_null;
+    return furn( p ) != f_str_null;
 }
 
-furn_id map::furn( const tripoint &p ) const
+furn_str_id map::furn( const tripoint &p ) const
 {
     if( !inbounds( p ) ) {
-        return f_null;
+        return f_str_null;
     }
 
     point l;
     submap *const current_submap = unsafe_get_submap_at( p, l );
     if( current_submap == nullptr ) {
         debugmsg( "Tried process furniture at (%d,%d) but the submap is not loaded", l.x, l.y );
-        return f_null;
+        return f_str_null;
     }
 
-    return current_submap->get_furn( l );
+    return current_submap->get_furn( l ).id();
 }
 
 void map::furn_set( const tripoint &p, const furn_id &new_furniture, const bool furn_reset )
@@ -1371,7 +1371,7 @@ void map::furn_set( const tripoint &p, const furn_id &new_furniture, const bool 
         player_character.grab( object_type::NONE );
     }
     // If a creature was crushed under a rubble -> free it
-    if( old_id == f_rubble && new_furniture == f_null ) {
+    if( old_id == f_rubble && new_furniture == f_str_null ) {
         Creature *c = g->critter_at( p );
         if( c ) {
             c->remove_effect( effect_crushed );
@@ -1465,20 +1465,20 @@ std::string map::furnname( const tripoint &p )
  * retained for high performance comparisons, save/load, and gradual transition
  * to string terrain.id
  */
-ter_id map::ter( const tripoint &p ) const
+ter_str_id map::ter( const tripoint &p ) const
 {
     if( !inbounds( p ) ) {
-        return t_null;
+        return t_str_null;
     }
 
     point l;
     submap *const current_submap = unsafe_get_submap_at( p, l );
     if( current_submap == nullptr ) {
         debugmsg( "Tried to process terrain at (%d,%d) but the submap is not loaded", l.x, l.y );
-        return t_null;
+        return t_str_null;
     }
 
-    return current_submap->get_ter( l );
+    return current_submap->get_ter( l ).id();
 }
 
 uint8_t map::get_known_connections( const tripoint &p, int connect_group,
@@ -2838,7 +2838,7 @@ bool map::has_nearby_chair( const tripoint &p, int radius )
     return false;
 }
 
-bool map::has_nearby_ter( const tripoint &p, const ter_id &type, int radius )
+bool map::has_nearby_ter( const tripoint &p, const ter_str_id &type, int radius )
 {
     for( const tripoint &pt : points_in_radius( p, radius ) ) {
         if( ter( pt ) == type ) {
@@ -3354,7 +3354,7 @@ void map::bash_ter_furn( const tripoint &p, bash_params &params )
             const int rad = tentp->second.obj().bash.collapse_radius;
             for( const tripoint &pt : points_in_radius( tentp->first, rad ) ) {
                 const auto frn = furn( pt );
-                if( frn == f_null ) {
+                if( frn == f_str_null ) {
                     continue;
                 }
 
@@ -3553,7 +3553,7 @@ void map::destroy_furn( const tripoint &p, const bool silent )
     // Break if it takes more than 25 destructions to remove to prevent infinite loops
     // Example: A bashes to B, B bashes to A leads to A->B->A->...
     int count = 0;
-    while( count <= 25 && furn( p ) != f_null && bash( p, 999, silent, true ).success ) {
+    while( count <= 25 && furn( p ) != f_str_null && bash( p, 999, silent, true ).success ) {
         count++;
     }
 }
@@ -3999,7 +3999,7 @@ void map::translate( const ter_id &from, const ter_id &to )
         return;
     }
     for( const tripoint &p : points_on_zlevel() ) {
-        if( ter( p ) == from ) {
+        if( ter( p ) == from.id() ) {
             ter_set( p, to );
         }
     }
@@ -4018,12 +4018,12 @@ void map::translate_radius( const ter_id &from, const ter_id &to, float radi, co
     for( const tripoint &t : points_on_zlevel() ) {
         const tripoint abs_omt_t = ms_to_omt_copy( getabs( t ) );
         const float radiX = trig_dist( p, t );
-        if( ter( t ) == from ) {
+        if( ter( t ) == from.id() ) {
             // within distance, and either no submap limitation or same overmap coords.
             if( radiX <= radi && ( !same_submap || abs_omt_t == abs_omt_p ) ) {
                 ter_set( t, to );
             }
-        } else if( toggle_between && ter( t ) == to ) {
+        } else if( toggle_between && ter( t ) == to.id() ) {
             if( radiX <= radi && ( !same_submap || abs_omt_t == abs_omt_p ) ) {
                 ter_set( t, from );
             }

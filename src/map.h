@@ -693,8 +693,8 @@ class map
         bool has_furn( const point &p ) const {
             return has_furn( tripoint( p, abs_sub.z ) );
         }
-        furn_id furn( const tripoint &p ) const;
-        furn_id furn( const point &p ) const {
+        furn_str_id furn( const tripoint &p ) const;
+        furn_str_id furn( const point &p ) const {
             return furn( tripoint( p, abs_sub.z ) );
         }
         /**
@@ -712,8 +712,8 @@ class map
         bool can_move_furniture( const tripoint &pos, player *p = nullptr );
 
         // Terrain
-        ter_id ter( const tripoint &p ) const;
-        ter_id ter( const point &p ) const {
+        ter_str_id ter( const tripoint &p ) const;
+        ter_str_id ter( const point &p ) const {
             return ter( tripoint( p, abs_sub.z ) );
         }
 
@@ -765,7 +765,7 @@ class map
         /**
          * Checks whether a specific terrain is nearby.
         */
-        bool has_nearby_ter( const tripoint &p, const ter_id &type, int radius = 1 );
+        bool has_nearby_ter( const tripoint &p, const ter_str_id &type, int radius = 1 );
         /**
          * Check if creature can see some items at p. Includes:
          * - check for items at this location (has_items(p))

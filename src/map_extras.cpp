@@ -2962,7 +2962,7 @@ static bool mx_city_trap( map &/*m*/, const tripoint &abs_sub )
     for( const tripoint &p : points_in_radius( trap_center, 1 ) ) {
         if( ( compmap.ter( p ) == t_pavement || compmap.ter( p ) == t_pavement_y ) &&
             compmap.tr_at( p ).is_null() &&
-            compmap.furn( p ) == f_null &&
+            compmap.furn( p ) == f_str_null &&
             !compmap.veh_at( p ) ) {
             empty_3x3_square = true;
             break;

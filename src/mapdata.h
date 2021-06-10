@@ -449,126 +449,329 @@ t_basalt
 "t_basalt"
 */
 // NOLINTNEXTLINE(cata-static-int_id-constants)
-extern ter_id t_null,
-       t_hole, // Real nothingness; makes you fall a z-level
-       // Ground
-       t_dirt, t_sand, t_clay, t_dirtmound, t_pit_shallow, t_pit, t_grave, t_grave_new,
-       t_pit_corpsed, t_pit_covered, t_pit_spiked, t_pit_spiked_covered, t_pit_glass, t_pit_glass_covered,
-       t_rock_floor,
-       t_grass, t_grass_long, t_grass_tall, t_grass_golf, t_grass_dead, t_grass_white, t_moss,
-       t_metal_floor,
-       t_pavement, t_pavement_y, t_sidewalk, t_concrete, t_zebra,
-       t_thconc_floor, t_thconc_floor_olight, t_strconc_floor,
-       t_floor, t_floor_waxed,
-       t_dirtfloor,//Dirt floor(Has roof)
-       t_carpet_red, t_carpet_yellow, t_carpet_purple, t_carpet_green,
-       t_grate,
-       t_slime,
-       t_bridge,
-       t_covered_well,
-       // Lighting related
-       t_utility_light,
-       // Walls
-       t_wall_log_half, t_wall_log, t_wall_log_chipped, t_wall_log_broken, t_palisade, t_palisade_gate,
-       t_palisade_gate_o,
-       t_wall_half, t_wall_wood, t_wall_wood_chipped, t_wall_wood_broken,
-       t_wall, t_concrete_wall, t_brick_wall,
-       t_wall_metal,
-       t_scrap_wall,
-       t_scrap_wall_halfway,
-       t_wall_glass,
-       t_wall_glass_alarm,
-       t_reinforced_glass, t_reinforced_glass_shutter, t_reinforced_glass_shutter_open,
-       t_laminated_glass, t_ballistic_glass,
-       t_reinforced_door_glass_o, t_reinforced_door_glass_c,
-       t_bars,
-       t_reb_cage,
-       t_door_c, t_door_c_peep, t_door_b, t_door_b_peep, t_door_o, t_door_o_peep,
-       t_door_locked_interior, t_door_locked, t_door_locked_peep, t_door_locked_alarm, t_door_frame,
-       t_chaingate_l, t_fencegate_c, t_fencegate_o, t_chaingate_c, t_chaingate_o,
-       t_retractable_gate_l, t_retractable_gate_c, t_retractable_gate_o,
-       t_door_boarded, t_door_boarded_damaged, t_door_boarded_peep, t_rdoor_boarded,
-       t_rdoor_boarded_damaged, t_door_boarded_damaged_peep,
-       t_door_metal_c, t_door_metal_o, t_door_metal_locked, t_door_metal_pickable,
-       t_door_bar_c, t_door_bar_o, t_door_bar_locked,
-       t_door_glass_c, t_door_glass_o, t_door_glass_frosted_c, t_door_glass_frosted_o,
-       t_portcullis,
-       t_recycler, t_window, t_window_taped, t_window_domestic, t_window_domestic_taped, t_window_open,
-       t_curtains, t_window_bars_curtains, t_window_bars_domestic,
-       t_window_alarm, t_window_alarm_taped, t_window_empty, t_window_frame, t_window_boarded,
-       t_window_boarded_noglass, t_window_bars_alarm, t_window_bars,
-       t_metal_grate_window, t_metal_grate_window_with_curtain, t_metal_grate_window_with_curtain_open,
-       t_metal_grate_window_noglass, t_metal_grate_window_with_curtain_noglass,
-       t_metal_grate_window_with_curtain_open_noglass,
-       t_window_stained_green, t_window_stained_red, t_window_stained_blue,
-       t_window_no_curtains, t_window_no_curtains_open, t_window_no_curtains_taped,
-       t_rock, t_fault,
-       t_paper,
-       t_rock_wall, t_rock_wall_half,
-       // Tree
-       t_tree, t_tree_young, t_tree_apple, t_tree_apple_harvested, t_tree_coffee, t_tree_coffee_harvested,
-       t_tree_pear, t_tree_pear_harvested,
-       t_tree_cherry, t_tree_cherry_harvested, t_tree_peach, t_tree_peach_harvested, t_tree_apricot,
-       t_tree_apricot_harvested,
-       t_tree_plum, t_tree_plum_harvested, t_tree_pine, t_tree_blackjack, t_tree_birch,
-       t_tree_birch_harvested, t_tree_willow, t_tree_willow_harvested, t_tree_maple, t_tree_maple_tapped,
-       t_tree_deadpine, t_tree_hickory, t_tree_hickory_dead, t_tree_hickory_harvested, t_underbrush,
-       t_shrub, t_shrub_blueberry, t_shrub_strawberry, t_trunk, t_stump,
-       t_root_wall,
-       t_wax, t_floor_wax,
-       t_fence, t_chainfence, t_chainfence_posts,
-       t_fence_post, t_fence_wire, t_fence_barbed, t_fence_rope,
-       t_railing,
-       // Nether
-       t_marloss, t_fungus_floor_in, t_fungus_floor_sup, t_fungus_floor_out, t_fungus_wall,
-       t_fungus_mound, t_fungus, t_shrub_fungal, t_tree_fungal, t_tree_fungal_young, t_marloss_tree,
-       // Water, lava, etc.
-       t_water_moving_dp, t_water_moving_sh, t_water_sh, t_swater_sh, t_water_dp, t_swater_dp,
-       t_water_pool, t_sewage,
-       t_lava,
-       // More embellishments than you can shake a stick at.
-       t_sandbox, t_slide, t_monkey_bars, t_backboard,
-       t_gas_pump, t_gas_pump_smashed,
-       t_diesel_pump, t_diesel_pump_smashed,
-       t_atm,
-       t_generator_broken,
-       t_missile, t_missile_exploded,
-       t_radio_tower, t_radio_controls,
-       t_console_broken, t_console, t_gates_mech_control, t_gates_control_concrete, t_gates_control_brick,
-       t_barndoor, t_palisade_pulley,
-       t_gates_control_metal,
-       t_sewage_pipe, t_sewage_pump,
-       t_centrifuge,
-       t_column,
-       t_vat,
-       t_rootcellar,
-       t_cvdbody, t_cvdmachine,
-       t_water_pump,
-       t_conveyor, t_machinery_light, t_machinery_heavy, t_machinery_old, t_machinery_electronic,
-       t_improvised_shelter,
-       // Staircases etc.
-       t_stairs_down, t_stairs_up, t_manhole, t_ladder_up, t_ladder_down, t_slope_down,
-       t_slope_up, t_rope_up,
-       t_manhole_cover,
-       // Special
-       t_card_science, t_card_military, t_card_industrial, t_card_reader_broken, t_slot_machine,
-       t_elevator_control, t_elevator_control_off, t_elevator, t_pedestal_wyrm,
-       t_pedestal_temple,
-       // Temple tiles
-       t_rock_red, t_rock_green, t_rock_blue, t_floor_red, t_floor_green, t_floor_blue,
-       t_switch_rg, t_switch_gb, t_switch_rb, t_switch_even,
-       t_rdoor_c, t_rdoor_b, t_rdoor_o, t_mdoor_frame, t_window_reinforced, t_window_reinforced_noglass,
-       t_window_enhanced, t_window_enhanced_noglass, t_open_air, t_plut_generator,
-       t_pavement_bg_dp, t_pavement_y_bg_dp, t_sidewalk_bg_dp, t_guardrail_bg_dp,
-       t_linoleum_white, t_linoleum_gray, t_rad_platform,
-       // Railroad and subway
-       t_railroad_rubble,
-       t_buffer_stop, t_railroad_crossing_signal, t_crossbuck_wood, t_crossbuck_metal,
-       t_railroad_tie, t_railroad_tie_h, t_railroad_tie_v, t_railroad_tie_d,
-       t_railroad_track, t_railroad_track_h, t_railroad_track_v, t_railroad_track_d, t_railroad_track_d1,
-       t_railroad_track_d2,
-       t_railroad_track_on_tie, t_railroad_track_h_on_tie, t_railroad_track_v_on_tie,
-       t_railroad_track_d_on_tie;
+extern ter_id t_null;
+extern const ter_str_id t_str_null;
+extern const ter_str_id t_hole; // Real nothingness; makes you fall a z-level
+// Ground
+extern const ter_str_id t_dirt;
+extern const ter_str_id t_sand;
+extern const ter_str_id t_clay;
+extern const ter_str_id t_dirtmound;
+extern const ter_str_id t_pit_shallow;
+extern const ter_str_id t_pit;
+extern const ter_str_id t_grave;
+extern const ter_str_id t_grave_new;
+extern const ter_str_id t_pit_corpsed;
+extern const ter_str_id t_pit_covered;
+extern const ter_str_id t_pit_spiked;
+extern const ter_str_id t_pit_spiked_covered;
+extern const ter_str_id t_pit_glass;
+extern const ter_str_id t_pit_glass_covered;
+extern const ter_str_id t_rock_floor;
+extern const ter_str_id t_grass;
+extern const ter_str_id t_grass_long;
+extern const ter_str_id t_grass_tall;
+extern const ter_str_id t_grass_golf;
+extern const ter_str_id t_grass_dead;
+extern const ter_str_id t_grass_white;
+extern const ter_str_id t_moss;
+extern const ter_str_id t_metal_floor;
+extern const ter_str_id t_pavement;
+extern const ter_str_id t_pavement_y;
+extern const ter_str_id t_sidewalk;
+extern const ter_str_id t_concrete;
+extern const ter_str_id t_zebra;
+extern const ter_str_id t_thconc_floor;
+extern const ter_str_id t_thconc_floor_olight;
+extern const ter_str_id t_strconc_floor;
+extern const ter_str_id t_floor;
+extern const ter_str_id t_floor_waxed;
+extern const ter_str_id t_dirtfloor; //Dirt floor(Has roof)
+extern const ter_str_id t_carpet_red;
+extern const ter_str_id t_carpet_yellow;
+extern const ter_str_id t_carpet_purple;
+extern const ter_str_id t_carpet_green;
+extern const ter_str_id t_grate;
+extern const ter_str_id t_slime;
+extern const ter_str_id t_bridge;
+extern const ter_str_id t_covered_well;
+// Lighting related
+extern const ter_str_id t_utility_light;
+// Walls
+extern const ter_str_id t_wall_log_half;
+extern const ter_str_id t_wall_log;
+extern const ter_str_id t_wall_log_chipped;
+extern const ter_str_id t_wall_log_broken;
+extern const ter_str_id t_palisade;
+extern const ter_str_id t_palisade_gate;
+extern const ter_str_id t_palisade_gate_o;
+extern const ter_str_id t_wall_half;
+extern const ter_str_id t_wall_wood;
+extern const ter_str_id t_wall_wood_chipped;
+extern const ter_str_id t_wall_wood_broken;
+extern const ter_str_id t_wall;
+extern const ter_str_id t_concrete_wall;
+extern const ter_str_id t_brick_wall;
+extern const ter_str_id t_wall_metal;
+extern const ter_str_id t_scrap_wall;
+extern const ter_str_id t_scrap_wall_halfway;
+extern const ter_str_id t_wall_glass;
+extern const ter_str_id t_wall_glass_alarm;
+extern const ter_str_id t_reinforced_glass;
+extern const ter_str_id t_reinforced_glass_shutter;
+extern const ter_str_id t_reinforced_glass_shutter_open;
+extern const ter_str_id t_laminated_glass;
+extern const ter_str_id t_ballistic_glass;
+extern const ter_str_id t_reinforced_door_glass_o;
+extern const ter_str_id t_reinforced_door_glass_c;
+extern const ter_str_id t_bars;
+extern const ter_str_id t_reb_cage;
+extern const ter_str_id t_door_c;
+extern const ter_str_id t_door_c_peep;
+extern const ter_str_id t_door_b;
+extern const ter_str_id t_door_b_peep;
+extern const ter_str_id t_door_o;
+extern const ter_str_id t_door_o_peep;
+extern const ter_str_id t_door_locked_interior;
+extern const ter_str_id t_door_locked;
+extern const ter_str_id t_door_locked_peep;
+extern const ter_str_id t_door_locked_alarm;
+extern const ter_str_id t_door_frame;
+extern const ter_str_id t_chaingate_l;
+extern const ter_str_id t_fencegate_c;
+extern const ter_str_id t_fencegate_o;
+extern const ter_str_id t_chaingate_c;
+extern const ter_str_id t_chaingate_o;
+extern const ter_str_id t_retractable_gate_l;
+extern const ter_str_id t_retractable_gate_c;
+extern const ter_str_id t_retractable_gate_o;
+extern const ter_str_id t_door_boarded;
+extern const ter_str_id t_door_boarded_damaged;
+extern const ter_str_id t_door_boarded_peep;
+extern const ter_str_id t_rdoor_boarded;
+extern const ter_str_id t_rdoor_boarded_damaged;
+extern const ter_str_id t_door_boarded_damaged_peep;
+extern const ter_str_id t_door_metal_c;
+extern const ter_str_id t_door_metal_o;
+extern const ter_str_id t_door_metal_locked;
+extern const ter_str_id t_door_metal_pickable;
+extern const ter_str_id t_door_bar_c;
+extern const ter_str_id t_door_bar_o;
+extern const ter_str_id t_door_bar_locked;
+extern const ter_str_id t_door_glass_c;
+extern const ter_str_id t_door_glass_o;
+extern const ter_str_id t_door_glass_frosted_c;
+extern const ter_str_id t_door_glass_frosted_o;
+extern const ter_str_id t_portcullis;
+extern const ter_str_id t_recycler;
+extern const ter_str_id t_window;
+extern const ter_str_id t_window_taped;
+extern const ter_str_id t_window_domestic;
+extern const ter_str_id t_window_domestic_taped;
+extern const ter_str_id t_window_open;
+extern const ter_str_id t_curtains;
+extern const ter_str_id t_window_bars_curtains;
+extern const ter_str_id t_window_bars_domestic;
+extern const ter_str_id t_window_alarm;
+extern const ter_str_id t_window_alarm_taped;
+extern const ter_str_id t_window_empty;
+extern const ter_str_id t_window_frame;
+extern const ter_str_id t_window_boarded;
+extern const ter_str_id t_window_boarded_noglass;
+extern const ter_str_id t_window_bars_alarm;
+extern const ter_str_id t_window_bars;
+extern const ter_str_id t_metal_grate_window;
+extern const ter_str_id t_metal_grate_window_with_curtain;
+extern const ter_str_id t_metal_grate_window_with_curtain_open;
+extern const ter_str_id t_metal_grate_window_noglass;
+extern const ter_str_id t_metal_grate_window_with_curtain_noglass;
+extern const ter_str_id t_metal_grate_window_with_curtain_open_noglass;
+extern const ter_str_id t_window_stained_green;
+extern const ter_str_id t_window_stained_red;
+extern const ter_str_id t_window_stained_blue;
+extern const ter_str_id t_window_no_curtains;
+extern const ter_str_id t_window_no_curtains_open;
+extern const ter_str_id t_window_no_curtains_taped;
+extern const ter_str_id t_rock;
+extern const ter_str_id t_fault;
+extern const ter_str_id t_paper;
+extern const ter_str_id t_rock_wall;
+extern const ter_str_id t_rock_wall_half;
+// Tree
+extern const ter_str_id t_tree;
+extern const ter_str_id t_tree_young;
+extern const ter_str_id t_tree_apple;
+extern const ter_str_id t_tree_apple_harvested;
+extern const ter_str_id t_tree_coffee;
+extern const ter_str_id t_tree_coffee_harvested;
+extern const ter_str_id t_tree_pear;
+extern const ter_str_id t_tree_pear_harvested;
+extern const ter_str_id t_tree_cherry;
+extern const ter_str_id t_tree_cherry_harvested;
+extern const ter_str_id t_tree_peach;
+extern const ter_str_id t_tree_peach_harvested;
+extern const ter_str_id t_tree_apricot;
+extern const ter_str_id t_tree_apricot_harvested;
+extern const ter_str_id t_tree_plum;
+extern const ter_str_id t_tree_plum_harvested;
+extern const ter_str_id t_tree_pine;
+extern const ter_str_id t_tree_blackjack;
+extern const ter_str_id t_tree_birch;
+extern const ter_str_id t_tree_birch_harvested;
+extern const ter_str_id t_tree_willow;
+extern const ter_str_id t_tree_willow_harvested;
+extern const ter_str_id t_tree_maple;
+extern const ter_str_id t_tree_maple_tapped;
+extern const ter_str_id t_tree_deadpine;
+extern const ter_str_id t_tree_hickory;
+extern const ter_str_id t_tree_hickory_dead;
+extern const ter_str_id t_tree_hickory_harvested;
+extern const ter_str_id t_underbrush;
+extern const ter_str_id t_shrub;
+extern const ter_str_id t_shrub_blueberry;
+extern const ter_str_id t_shrub_strawberry;
+extern const ter_str_id t_trunk;
+extern const ter_str_id t_stump;
+extern const ter_str_id t_root_wall;
+extern const ter_str_id t_wax;
+extern const ter_str_id t_floor_wax;
+extern const ter_str_id t_fence;
+extern const ter_str_id t_chainfence;
+extern const ter_str_id t_chainfence_posts;
+extern const ter_str_id t_fence_post;
+extern const ter_str_id t_fence_wire;
+extern const ter_str_id t_fence_barbed;
+extern const ter_str_id t_fence_rope;
+extern const ter_str_id t_railing;
+// Nether
+extern const ter_str_id t_marloss;
+extern const ter_str_id t_fungus_floor_in;
+extern const ter_str_id t_fungus_floor_sup;
+extern const ter_str_id t_fungus_floor_out;
+extern const ter_str_id t_fungus_wall;
+extern const ter_str_id t_fungus_mound;
+extern const ter_str_id t_fungus;
+extern const ter_str_id t_shrub_fungal;
+extern const ter_str_id t_tree_fungal;
+extern const ter_str_id t_tree_fungal_young;
+extern const ter_str_id t_marloss_tree;
+// Water, lava, etc.
+extern const ter_str_id t_water_moving_dp;
+extern const ter_str_id t_water_moving_sh;
+extern const ter_str_id t_water_sh;
+extern const ter_str_id t_swater_sh;
+extern const ter_str_id t_water_dp;
+extern const ter_str_id t_swater_dp;
+extern const ter_str_id t_water_pool;
+extern const ter_str_id t_sewage;
+extern const ter_str_id t_lava;
+// More embellishments than you can shake a stick at.
+extern const ter_str_id t_sandbox;
+extern const ter_str_id t_slide;
+extern const ter_str_id t_monkey_bars;
+extern const ter_str_id t_backboard;
+extern const ter_str_id t_gas_pump;
+extern const ter_str_id t_gas_pump_smashed;
+extern const ter_str_id t_diesel_pump;
+extern const ter_str_id t_diesel_pump_smashed;
+extern const ter_str_id t_atm;
+extern const ter_str_id t_generator_broken;
+extern const ter_str_id t_missile;
+extern const ter_str_id t_missile_exploded;
+extern const ter_str_id t_radio_tower;
+extern const ter_str_id t_radio_controls;
+extern const ter_str_id t_console_broken;
+extern const ter_str_id t_console;
+extern const ter_str_id t_gates_mech_control;
+extern const ter_str_id t_gates_control_concrete;
+extern const ter_str_id t_gates_control_brick;
+extern const ter_str_id t_barndoor;
+extern const ter_str_id t_palisade_pulley;
+extern const ter_str_id t_gates_control_metal;
+extern const ter_str_id t_sewage_pipe;
+extern const ter_str_id t_sewage_pump;
+extern const ter_str_id t_centrifuge;
+extern const ter_str_id t_column;
+extern const ter_str_id t_vat;
+extern const ter_str_id t_rootcellar;
+extern const ter_str_id t_cvdbody;
+extern const ter_str_id t_cvdmachine;
+extern const ter_str_id t_water_pump;
+extern const ter_str_id t_conveyor;
+extern const ter_str_id t_machinery_light;
+extern const ter_str_id t_machinery_heavy;
+extern const ter_str_id t_machinery_old;
+extern const ter_str_id t_machinery_electronic;
+extern const ter_str_id t_improvised_shelter;
+// Staircases etc.
+extern const ter_str_id t_stairs_down;
+extern const ter_str_id t_stairs_up;
+extern const ter_str_id t_manhole;
+extern const ter_str_id t_ladder_up;
+extern const ter_str_id t_ladder_down;
+extern const ter_str_id t_slope_down;
+extern const ter_str_id t_slope_up;
+extern const ter_str_id t_rope_up;
+extern const ter_str_id t_manhole_cover;
+// Special
+extern const ter_str_id t_card_science;
+extern const ter_str_id t_card_military;
+extern const ter_str_id t_card_industrial;
+extern const ter_str_id t_card_reader_broken;
+extern const ter_str_id t_slot_machine;
+extern const ter_str_id t_elevator_control;
+extern const ter_str_id t_elevator_control_off;
+extern const ter_str_id t_elevator;
+extern const ter_str_id t_pedestal_wyrm;
+extern const ter_str_id t_pedestal_temple;
+// Temple tiles
+extern const ter_str_id t_rock_red;
+extern const ter_str_id t_rock_green;
+extern const ter_str_id t_rock_blue;
+extern const ter_str_id t_floor_red;
+extern const ter_str_id t_floor_green;
+extern const ter_str_id t_floor_blue;
+extern const ter_str_id t_switch_rg;
+extern const ter_str_id t_switch_gb;
+extern const ter_str_id t_switch_rb;
+extern const ter_str_id t_switch_even;
+extern const ter_str_id t_rdoor_c;
+extern const ter_str_id t_rdoor_b;
+extern const ter_str_id t_rdoor_o;
+extern const ter_str_id t_mdoor_frame;
+extern const ter_str_id t_window_reinforced;
+extern const ter_str_id t_window_reinforced_noglass;
+extern const ter_str_id t_window_enhanced;
+extern const ter_str_id t_window_enhanced_noglass;
+extern const ter_str_id t_open_air;
+extern const ter_str_id t_plut_generator;
+extern const ter_str_id t_pavement_bg_dp;
+extern const ter_str_id t_pavement_y_bg_dp;
+extern const ter_str_id t_sidewalk_bg_dp;
+extern const ter_str_id t_guardrail_bg_dp;
+extern const ter_str_id t_linoleum_white;
+extern const ter_str_id t_linoleum_gray;
+extern const ter_str_id t_rad_platform;
+// Railroad and subway
+extern const ter_str_id t_railroad_rubble;
+extern const ter_str_id t_buffer_stop;
+extern const ter_str_id t_railroad_crossing_signal;
+extern const ter_str_id t_crossbuck_wood;
+extern const ter_str_id t_crossbuck_metal;
+extern const ter_str_id t_railroad_tie;
+extern const ter_str_id t_railroad_tie_h;
+extern const ter_str_id t_railroad_tie_v;
+extern const ter_str_id t_railroad_tie_d;
+extern const ter_str_id t_railroad_track;
+extern const ter_str_id t_railroad_track_h;
+extern const ter_str_id t_railroad_track_v;
+extern const ter_str_id t_railroad_track_d;
+extern const ter_str_id t_railroad_track_d1;
+extern const ter_str_id t_railroad_track_d2;
+extern const ter_str_id t_railroad_track_on_tie;
+extern const ter_str_id t_railroad_track_h_on_tie;
+extern const ter_str_id t_railroad_track_v_on_tie;
+extern const ter_str_id t_railroad_track_d_on_tie;
 
 /*
 runtime index: furn_id
@@ -576,49 +779,120 @@ furn_id refers to a position in the furnlist[] where the furn_t struct is stored
 about ter_id above.
 */
 // NOLINTNEXTLINE(cata-static-int_id-constants)
-extern furn_id f_null,
-       f_hay, f_cattails, f_lotus, f_lilypad,
-       f_rubble, f_rubble_rock, f_wreckage, f_ash,
-       f_barricade_road, f_sandbag_half, f_sandbag_wall,
-       f_bulletin,
-       f_indoor_plant,
-       f_bed, f_toilet, f_makeshift_bed, f_straw_bed,
-       f_sink, f_oven, f_woodstove, f_fireplace, f_bathtub,
-       f_chair, f_armchair, f_sofa, f_cupboard, f_trashcan, f_desk, f_exercise,
-       f_bench, f_table, f_pool_table,
-       f_counter,
-       f_fridge, f_glass_fridge, f_dresser, f_locker,
-       f_rack, f_bookcase,
-       f_washer, f_dryer,
-       f_vending_c, f_vending_o, f_dumpster, f_dive_block,
-       f_crate_c, f_crate_o, f_coffin_c, f_coffin_o,
-       f_large_canvas_wall, f_canvas_wall, f_canvas_door, f_canvas_door_o, f_groundsheet,
-       f_fema_groundsheet, f_large_groundsheet,
-       f_large_canvas_door, f_large_canvas_door_o, f_center_groundsheet, f_skin_wall, f_skin_door,
-       f_skin_door_o,  f_skin_groundsheet,
-       f_mutpoppy, f_flower_fungal, f_fungal_mass, f_fungal_clump,
-       f_safe_c, f_safe_l, f_safe_o,
-       f_plant_seed, f_plant_seedling, f_plant_mature, f_plant_harvest,
-       f_fvat_empty, f_fvat_full,
-       f_wood_keg,
-       f_standing_tank,
-       f_egg_sackbw, f_egg_sackcs, f_egg_sackws, f_egg_sacke,
-       f_flower_marloss,
-       f_tatami,
-       f_kiln_empty, f_kiln_full, f_kiln_metal_empty, f_kiln_metal_full,
-       f_arcfurnace_empty, f_arcfurnace_full,
-       f_smoking_rack, f_smoking_rack_active, f_metal_smoking_rack, f_metal_smoking_rack_active,
-       f_water_mill, f_water_mill_active,
-       f_wind_mill, f_wind_mill_active,
-       f_robotic_arm, f_vending_reinforced,
-       f_brazier,
-       f_firering,
-       f_tourist_table,
-       f_camp_chair,
-       f_sign,
-       f_gunsafe_ml, f_gunsafe_mj, f_gun_safe_el,
-       f_street_light, f_traffic_light,
-       f_console, f_console_broken;
+extern furn_id f_null;
+extern const furn_str_id f_str_null;
+extern const furn_str_id f_hay;
+extern const furn_str_id f_cattails;
+extern const furn_str_id f_lotus;
+extern const furn_str_id f_lilypad;
+extern const furn_str_id f_rubble;
+extern const furn_str_id f_rubble_rock;
+extern const furn_str_id f_wreckage;
+extern const furn_str_id f_ash;
+extern const furn_str_id f_barricade_road;
+extern const furn_str_id f_sandbag_half;
+extern const furn_str_id f_sandbag_wall;
+extern const furn_str_id f_bulletin;
+extern const furn_str_id f_indoor_plant;
+extern const furn_str_id f_bed;
+extern const furn_str_id f_toilet;
+extern const furn_str_id f_makeshift_bed;
+extern const furn_str_id f_straw_bed;
+extern const furn_str_id f_sink;
+extern const furn_str_id f_oven;
+extern const furn_str_id f_woodstove;
+extern const furn_str_id f_fireplace;
+extern const furn_str_id f_bathtub;
+extern const furn_str_id f_chair;
+extern const furn_str_id f_armchair;
+extern const furn_str_id f_sofa;
+extern const furn_str_id f_cupboard;
+extern const furn_str_id f_trashcan;
+extern const furn_str_id f_desk;
+extern const furn_str_id f_exercise;
+extern const furn_str_id f_bench;
+extern const furn_str_id f_table;
+extern const furn_str_id f_pool_table;
+extern const furn_str_id f_counter;
+extern const furn_str_id f_fridge;
+extern const furn_str_id f_glass_fridge;
+extern const furn_str_id f_dresser;
+extern const furn_str_id f_locker;
+extern const furn_str_id f_rack;
+extern const furn_str_id f_bookcase;
+extern const furn_str_id f_washer;
+extern const furn_str_id f_dryer;
+extern const furn_str_id f_vending_c;
+extern const furn_str_id f_vending_o;
+extern const furn_str_id f_dumpster;
+extern const furn_str_id f_dive_block;
+extern const furn_str_id f_crate_c;
+extern const furn_str_id f_crate_o;
+extern const furn_str_id f_coffin_c;
+extern const furn_str_id f_coffin_o;
+extern const furn_str_id f_large_canvas_wall;
+extern const furn_str_id f_canvas_wall;
+extern const furn_str_id f_canvas_door;
+extern const furn_str_id f_canvas_door_o;
+extern const furn_str_id f_groundsheet;
+extern const furn_str_id f_fema_groundsheet;
+extern const furn_str_id f_large_groundsheet;
+extern const furn_str_id f_large_canvas_door;
+extern const furn_str_id f_large_canvas_door_o;
+extern const furn_str_id f_center_groundsheet;
+extern const furn_str_id f_skin_wall;
+extern const furn_str_id f_skin_door;
+extern const furn_str_id f_skin_door_o;
+extern const furn_str_id f_skin_groundsheet;
+extern const furn_str_id f_mutpoppy;
+extern const furn_str_id f_flower_fungal;
+extern const furn_str_id f_fungal_mass;
+extern const furn_str_id f_fungal_clump;
+extern const furn_str_id f_safe_c;
+extern const furn_str_id f_safe_l;
+extern const furn_str_id f_safe_o;
+extern const furn_str_id f_plant_seed;
+extern const furn_str_id f_plant_seedling;
+extern const furn_str_id f_plant_mature;
+extern const furn_str_id f_plant_harvest;
+extern const furn_str_id f_fvat_empty;
+extern const furn_str_id f_fvat_full;
+extern const furn_str_id f_wood_keg;
+extern const furn_str_id f_standing_tank;
+extern const furn_str_id f_egg_sackbw;
+extern const furn_str_id f_egg_sackcs;
+extern const furn_str_id f_egg_sackws;
+extern const furn_str_id f_egg_sacke;
+extern const furn_str_id f_flower_marloss;
+extern const furn_str_id f_tatami;
+extern const furn_str_id f_kiln_empty;
+extern const furn_str_id f_kiln_full;
+extern const furn_str_id f_kiln_metal_empty;
+extern const furn_str_id f_kiln_metal_full;
+extern const furn_str_id f_arcfurnace_empty;
+extern const furn_str_id f_arcfurnace_full;
+extern const furn_str_id f_smoking_rack;
+extern const furn_str_id f_smoking_rack_active;
+extern const furn_str_id f_metal_smoking_rack;
+extern const furn_str_id f_metal_smoking_rack_active;
+extern const furn_str_id f_water_mill;
+extern const furn_str_id f_water_mill_active;
+extern const furn_str_id f_wind_mill;
+extern const furn_str_id f_wind_mill_active;
+extern const furn_str_id f_robotic_arm;
+extern const furn_str_id f_vending_reinforced;
+extern const furn_str_id f_brazier;
+extern const furn_str_id f_firering;
+extern const furn_str_id f_tourist_table;
+extern const furn_str_id f_camp_chair;
+extern const furn_str_id f_sign;
+extern const furn_str_id f_gunsafe_ml;
+extern const furn_str_id f_gunsafe_mj;
+extern const furn_str_id f_gun_safe_el;
+extern const furn_str_id f_street_light;
+extern const furn_str_id f_traffic_light;
+extern const furn_str_id f_console;
+extern const furn_str_id f_console_broken;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //// These are on their way OUT and only used in certain switch statements until they are rewritten.

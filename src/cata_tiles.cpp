@@ -2523,10 +2523,10 @@ bool cata_tiles::draw_furniture( const tripoint &p, const lit_level ll, int &hei
     const furn_id &f = here.furn( p );
     if( f && !invisible[0] ) {
         const int neighborhood[4] = {
-            static_cast<int>( here.furn( p + point_south ) ),
-            static_cast<int>( here.furn( p + point_east ) ),
-            static_cast<int>( here.furn( p + point_west ) ),
-            static_cast<int>( here.furn( p + point_north ) )
+            static_cast<int>( here.furn( p + point_south ).id() ),
+            static_cast<int>( here.furn( p + point_east ).id() ),
+            static_cast<int>( here.furn( p + point_west ).id() ),
+            static_cast<int>( here.furn( p + point_north ).id() )
         };
         int subtile = 0;
         int rotation = 0;

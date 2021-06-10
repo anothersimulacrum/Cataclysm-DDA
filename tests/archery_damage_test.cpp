@@ -45,9 +45,9 @@ static void test_projectile_hitting_wall( const std::string &target_type, bool s
         CAPTURE( ter_id( target_type ).obj().name() );
         CAPTURE( here.ter( target_point ).obj().name() );
         if( smashable ) {
-            CHECK( here.ter( target_point ) != ter_id( target_type ) );
+            CHECK( here.ter( target_point ) != ter_str_id( target_type ) );
         } else {
-            CHECK( here.ter( target_point ) == ter_id( target_type ) );
+            CHECK( here.ter( target_point ) == ter_str_id( target_type ) );
         }
     }
 }

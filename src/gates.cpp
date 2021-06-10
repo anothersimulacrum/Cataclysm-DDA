@@ -70,7 +70,7 @@ struct gate_data {
 
 gate_id get_gate_id( const tripoint &pos )
 {
-    return gate_id( get_map().ter( pos ).id().str() );
+    return gate_id( get_map().ter( pos ).str() );
 }
 
 generic_factory<gate_data> gates_data( "gate type" );
@@ -191,7 +191,7 @@ void gates::open_gate( const tripoint &pos )
 
             if( !open ) { // Closing the gate...
                 tripoint cur_pos = gate_pos;
-                while( here.ter( cur_pos ) == gate.floor.id() ) {
+                while( here.ter( cur_pos ) == gate.floor ) {
                     fail = !g->forced_door_closing( cur_pos, gate.door.id(), gate.bash_dmg ) || fail;
                     close = !fail;
                     cur_pos += gate_offset;

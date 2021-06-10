@@ -140,15 +140,15 @@ TEST_CASE( "collapse_checks", "[.]" )
 {
     constexpr int wall_size = 5;
 
-    const ter_id floor_id = ter_id( "t_floor" );
-    const ter_id dirt_id = ter_id( "t_dirt" );
-    const ter_id wall_id = ter_id( "t_wall" );
-    const ter_id open_air_id = ter_id( "t_open_air" );
+    const ter_str_id floor_id = ter_str_id( "t_floor" );
+    const ter_str_id dirt_id = ter_str_id( "t_dirt" );
+    const ter_str_id wall_id = ter_str_id( "t_wall" );
+    const ter_str_id open_air_id = ter_str_id( "t_open_air" );
 
-    REQUIRE( floor_id != t_null );
-    REQUIRE( dirt_id != t_null );
-    REQUIRE( wall_id != t_null );
-    REQUIRE( open_air_id != t_null );
+    REQUIRE( floor_id != t_str_null );
+    REQUIRE( dirt_id != t_str_null );
+    REQUIRE( wall_id != t_str_null );
+    REQUIRE( open_air_id != t_str_null );
 
     clear_map_and_put_player_underground();
 

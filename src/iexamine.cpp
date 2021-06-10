@@ -997,11 +997,11 @@ void iexamine::elevator( player &p, const tripoint &examp )
     for( Creature &critter : g->all_creatures() ) {
         if( critter.is_player() ) {
             continue;
-        } else if( here.ter( critter.pos() ) == ter_id( "t_elevator" ) ) {
+        } else if( here.ter( critter.pos() ) == ter_str_id( "t_elevator" ) ) {
             tripoint critter_omt = ms_to_omt_copy( here.getabs( critter.pos() ) );
             if( critter_omt == new_floor_omt ) {
                 for( const tripoint &candidate : closest_points_first( critter.pos(), 10 ) ) {
-                    if( here.ter( candidate ) != ter_id( "t_elevator" ) &&
+                    if( here.ter( candidate ) != ter_str_id( "t_elevator" ) &&
                         here.passable( candidate ) &&
                         !g->critter_at( candidate ) ) {
                         critter.setpos( candidate );
@@ -1019,12 +1019,12 @@ void iexamine::elevator( player &p, const tripoint &examp )
     for( Creature &critter : g->all_creatures() ) {
         if( critter.is_player() ) {
             continue;
-        } else if( here.ter( critter.pos() ) == ter_id( "t_elevator" ) ) {
+        } else if( here.ter( critter.pos() ) == ter_str_id( "t_elevator" ) ) {
             tripoint critter_omt = ms_to_omt_copy( here.getabs( critter.pos() ) );
 
             if( critter_omt == original_floor_omt ) {
                 for( const tripoint &candidate : closest_points_first( p.pos(), 10 ) ) {
-                    if( here.ter( candidate ) == ter_id( "t_elevator" ) &&
+                    if( here.ter( candidate ) == ter_str_id( "t_elevator" ) &&
                         candidate != p.pos() &&
                         !g->critter_at( candidate ) ) {
                         critter.setpos( candidate );
@@ -1287,7 +1287,7 @@ static std::pair<itype_id, const deploy_tent_actor *> find_tent_itype( const fur
 void iexamine::portable_structure( player &p, const tripoint &examp )
 {
     map &here = get_map();
-    const furn_str_id fid = here.furn( examp ).id();
+    const furn_str_id fid = here.furn( examp );
     const std::pair<itype_id, const deploy_tent_actor *> tent_item_type = find_tent_itype( fid );
     if( tent_item_type.first.is_null() ) {
         debugmsg( "unknown furniture %s: don't know how to transform it into an item", fid.str() );
@@ -2524,7 +2524,7 @@ void iexamine::kiln_empty( player &p, const tripoint &examp )
         next_kiln_type = f_kiln_metal_full;
     } else {
         debugmsg( "Examined furniture has action kiln_empty, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 
@@ -2599,7 +2599,7 @@ void iexamine::kiln_full( player &, const tripoint &examp )
         next_kiln_type = f_kiln_metal_empty;
     } else {
         debugmsg( "Examined furniture has action kiln_full, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 
@@ -2655,7 +2655,7 @@ void iexamine::arcfurnace_empty( player &p, const tripoint &examp )
         next_arcfurnace_type = f_arcfurnace_full;
     } else {
         debugmsg( "Examined furniture has action arcfurnace_empty, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 
@@ -2728,7 +2728,7 @@ void iexamine::arcfurnace_full( player &, const tripoint &examp )
         next_arcfurnace_type = f_arcfurnace_empty;
     } else {
         debugmsg( "Examined furniture has action arcfurnace_full, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 
@@ -2785,7 +2785,7 @@ void iexamine::autoclave_empty( player &p, const tripoint &examp )
         next_autoclave_type = furn_id( "f_autoclave_full" );
     } else {
         debugmsg( "Examined furniture has action autoclave_empty, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 
@@ -2845,7 +2845,7 @@ void iexamine::autoclave_full( player &, const tripoint &examp )
         next_autoclave_type = furn_id( "f_autoclave" );
     } else {
         debugmsg( "Examined furniture has action autoclave_full, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 
@@ -5089,7 +5089,7 @@ static void mill_activate( player &p, const tripoint &examp )
         next_mill_type = f_water_mill_active;
     } else {
         debugmsg( "Examined furniture has action mill_activate, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
     bool food_present = false;
@@ -5150,7 +5150,7 @@ static void smoker_activate( player &p, const tripoint &examp )
         next_smoker_type = f_metal_smoking_rack_active;
     } else {
         debugmsg( "Examined furniture has action smoker_activate, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
     bool food_present = false;
@@ -5254,7 +5254,7 @@ void iexamine::mill_finalize( player &, const tripoint &examp, const time_point 
         next_mill_type = f_water_mill;
     } else {
         debugmsg( "Furniture executed action mill_finalize, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 
@@ -5299,7 +5299,7 @@ static void smoker_finalize( player &, const tripoint &examp, const time_point &
         next_smoker_type = f_metal_smoking_rack;
     } else {
         debugmsg( "Furniture executed action smoker_finalize, but is of type %s",
-                  here.furn( examp ).id().c_str() );
+                  here.furn( examp ).c_str() );
         return;
     }
 

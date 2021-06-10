@@ -3604,7 +3604,7 @@ static bool has_neighbor( const tripoint &pos, const ter_id &terrain_id )
 {
     map &here = get_map();
     for( const tripoint &t : here.points_in_radius( pos, 1, 0 ) ) {
-        if( here.ter( t ) == terrain_id ) {
+        if( here.ter( t ) == terrain_id.id() ) {
             return true;
         }
     }

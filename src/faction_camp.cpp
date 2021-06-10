@@ -363,13 +363,13 @@ std::map<std::string, miss_data> miss_info = {{
  * @param estimate if true, non-destructive count of the furniture
  * @param bring_back force the destruction of the furniture and bring back the drop items
  */
-static int om_harvest_ter( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_id &t,
+static int om_harvest_ter( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_str_id &t,
                            int chance = 100,
                            bool estimate = false, bool bring_back = true );
 // om_harvest_ter helper function that counts the furniture instances
-static int om_harvest_ter_est( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_id &t,
+static int om_harvest_ter_est( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_str_id &t,
                                int chance = 100 );
-static int om_harvest_ter_break( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_id &t,
+static int om_harvest_ter_break( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_str_id &t,
                                  int chance = 100 );
 /// Collects all items in @ref omt_tgt with a @ref chance between 0 - 1.0, returns total
 /// mass and volume
@@ -1923,7 +1923,7 @@ void basecamp::start_cut_logs()
         sample_npc.set_fake( true );
         int tree_est = om_cutdown_trees_est( forest, 50 );
         int tree_young_est = om_harvest_ter_est( sample_npc, forest,
-                             ter_id( "t_tree_young" ), 50 );
+                             ter_str_id( "t_tree_young" ), 50 );
         int dist = rl_dist( forest.xy(), omt_pos.xy() );
         //Very roughly what the player does + 6 hours for prep, clean up, breaks
         time_duration chop_time = 6_hours + 1_hours * tree_est + 7_minutes * tree_young_est;
@@ -1941,7 +1941,7 @@ void basecamp::start_cut_logs()
                                       skill_fabrication, 2 );
         if( comp != nullptr ) {
             om_cutdown_trees_logs( forest, 50 );
-            om_harvest_ter( *comp, forest, ter_id( "t_tree_young" ), 50 );
+            om_harvest_ter( *comp, forest, ter_str_id( "t_tree_young" ), 50 );
             mass_volume harvest = om_harvest_itm( comp, forest, 95 );
             // recalculate trips based on actual load and capacity
             travel_time = companion_travel_time_calc( forest, omt_pos, 0_minutes, 2,
@@ -1970,7 +1970,7 @@ void basecamp::start_clearcut()
         sample_npc.set_fake( true );
         int tree_est = om_cutdown_trees_est( forest, 95 );
         int tree_young_est = om_harvest_ter_est( sample_npc, forest,
-                             ter_id( "t_tree_young" ), 95 );
+                             ter_str_id( "t_tree_young" ), 95 );
         int dist = rl_dist( forest.xy(), omt_pos.xy() );
         //Very roughly what the player does + 6 hours for prep, clean up, breaks
         time_duration chop_time = 6_hours + 1_hours * tree_est + 7_minutes * tree_young_est;
@@ -1986,7 +1986,7 @@ void basecamp::start_clearcut()
                                       skill_fabrication, 1 );
         if( comp != nullptr ) {
             om_cutdown_trees_trunks( forest, 95 );
-            om_harvest_ter_break( *comp, forest, ter_id( "t_tree_young" ), 95 );
+            om_harvest_ter_break( *comp, forest, ter_str_id( "t_tree_young" ), 95 );
             //If we cleared a forest...
             if( om_cutdown_trees_est( forest ) < 5 ) {
                 overmap_buffer.ter_set( forest, oter_id( "field" ) );
@@ -3078,15 +3078,17 @@ void basecamp::hunting_results( int skill, const std::string &task, int attempts
     }
 }
 
-int om_harvest_ter_est( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_id &t, int chance )
+int om_harvest_ter_est( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_str_id &t,
+                        int chance )
 {
     return om_harvest_ter( comp, omt_tgt, t, chance, true, false );
 }
-int om_harvest_ter_break( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_id &t, int chance )
+int om_harvest_ter_break( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_str_id &t,
+                          int chance )
 {
     return om_harvest_ter( comp, omt_tgt, t, chance, false, false );
 }
-int om_harvest_ter( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_id &t, int chance,
+int om_harvest_ter( npc &comp, const tripoint_abs_omt &omt_tgt, const ter_str_id &t, int chance,
                     bool estimate, bool bring_back )
 {
     const ter_t &ter_tgt = t.obj();
@@ -3167,7 +3169,7 @@ int om_cutdown_trees( const tripoint_abs_omt &omt_tgt, int chance, bool estimate
     }
     // having cut down the trees, cut the trunks into logs
     for( const tripoint &p : target_bay.points_in_rectangle( mapmin, mapmax ) ) {
-        if( target_bay.ter( p ) == ter_id( "t_trunk" ) ) {
+        if( target_bay.ter( p ) == ter_str_id( "t_trunk" ) ) {
             target_bay.ter_set( p, t_dirt );
             target_bay.spawn_item( p, itype_log, rng( 2, 3 ), 0, calendar::turn );
             harvested++;

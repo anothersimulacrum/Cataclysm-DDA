@@ -3359,7 +3359,7 @@ void mapgen_lake_shore( mapgendata &dat )
         if( !map_boundaries.contains( p ) ) {
             return false;
         }
-        return m->ter( p ) != t_null;
+        return m->ter( p ) != t_str_null;
     };
 
     const auto fill_deep_water = [&]( const point & starting_point ) {

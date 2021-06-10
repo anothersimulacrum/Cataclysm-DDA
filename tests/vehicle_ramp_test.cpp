@@ -87,8 +87,8 @@ static void ramp_transition_angled( const vproto_id &veh_id, const units::angle 
     clear_game_and_set_ramp( transition_x, use_ramp, up );
 
     const tripoint map_starting_point( transition_x + 4, 60, 0 );
-    REQUIRE( here.ter( map_starting_point ) == ter_id( "t_pavement" ) );
-    if( here.ter( map_starting_point ) != ter_id( "t_pavement" ) ) {
+    REQUIRE( here.ter( map_starting_point ) == ter_str_id( "t_pavement" ) );
+    if( here.ter( map_starting_point ) != ter_str_id( "t_pavement" ) ) {
         return;
     }
     vehicle *veh_ptr = here.add_vehicle( veh_id, map_starting_point, angle, 1, 0 );
