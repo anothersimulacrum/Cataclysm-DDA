@@ -330,9 +330,44 @@ bool plant_data::load( const JsonObject &jsobj, const std::string &member )
     return true;
 }
 
+furn_t null_furniture_t()
+{
+    furn_t new_furniture;
+    new_furniture.id = furn_str_id::NULL_ID();
+    new_furniture.name_ = to_translation( "nothing" );
+    new_furniture.symbol_.fill( ' ' );
+    new_furniture.color_.fill( c_white );
+    new_furniture.light_emitted = 0;
+    new_furniture.movecost = 0;
+    new_furniture.move_str_req = -1;
+    new_furniture.transparent = true;
+    new_furniture.set_flag( flag_TRANSPARENT );
+    new_furniture.examine_func = iexamine_function_from_string( "none" );
+    new_furniture.max_volume = DEFAULT_MAX_VOLUME_IN_SQUARE;
+    return new_furniture;
+}
+
 ter_t::ter_t() : open( ter_str_id::NULL_ID() ), close( ter_str_id::NULL_ID() ),
     transforms_into( ter_str_id::NULL_ID() ),
     roof( ter_str_id::NULL_ID() ), trap( tr_null ) {}
+
+ter_t null_terrain_t()
+{
+    ter_t new_terrain;
+
+    new_terrain.id = ter_str_id::NULL_ID();
+    new_terrain.name_ = to_translation( "nothing" );
+    new_terrain.symbol_.fill( ' ' );
+    new_terrain.color_.fill( c_white );
+    new_terrain.light_emitted = 0;
+    new_terrain.movecost = 0;
+    new_terrain.transparent = true;
+    new_terrain.set_flag( flag_TRANSPARENT );
+    new_terrain.set_flag( flag_DIGGABLE );
+    new_terrain.examine_func = iexamine_function_from_string( "none" );
+    new_terrain.max_volume = DEFAULT_MAX_VOLUME_IN_SQUARE;
+    return new_terrain;
+}
 
 template<typename C, typename F>
 void load_season_array( const JsonObject &jo, const std::string &key, C &container, F load_func )
@@ -451,11 +486,17 @@ const std::set<std::string> &map_data_common_t::get_harvest_names() const
 
 void load_furniture( const JsonObject &jo, const std::string &src )
 {
+    if( furniture_data.empty() ) {
+        furniture_data.insert( null_furniture_t() );
+    }
     furniture_data.load( jo, src );
 }
 
 void load_terrain( const JsonObject &jo, const std::string &src )
 {
+    if( terrain_data.empty() ) { // TODO: This shouldn't live here
+        terrain_data.insert( null_terrain_t() );
+    }
     terrain_data.load( jo, src );
 }
 
