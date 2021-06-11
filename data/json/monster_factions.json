@@ -2,12 +2,6 @@
   {
     "//": "After changing this file, you might want to run the 'generate_monfactions_attitude_matrix' on-demand test",
     "type": "MONSTER_FACTION",
-    "name": "",
-    "base_faction": "",
-    "by_mood": [ "" ]
-  },
-  {
-    "type": "MONSTER_FACTION",
     "name": "factionless",
     "by_mood": "factionless"
   },

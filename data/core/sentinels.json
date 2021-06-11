@@ -42,5 +42,19 @@
     "type": "field_type",
     "legacy_enum_id": 0,
     "intensity_levels": [ { "name": "nothing" } ]
+  },
+  {
+    "type": "MONSTER_FACTION",
+    "name": "",
+    "base_faction": "",
+    "by_mood": [ "" ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "",
+    "name": "nothing",
+    "sym": "%",
+    "color": "white",
+    "flags": [ "NO_ROTATE" ]
   }
 ]
