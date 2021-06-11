@@ -1,0 +1,10 @@
+[
+  {
+    "type": "overmap_terrain",
+    "id": "empty",
+    "name": "empty",
+    "sym": "|",
+    "color": "white",
+    "flags": [ "NO_ROTATE" ]
+  }
+]

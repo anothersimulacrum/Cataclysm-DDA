@@ -1,0 +1,11 @@
+[
+  {
+    "type": "scenario",
+    "id": "evacuee",
+    "name": "Nothing",
+    "points": 0,
+    "description": "AAAAAA",
+    "allowed_locs": [ "sloc_none" ],
+    "start_name": "Nothing"
+  }
+]

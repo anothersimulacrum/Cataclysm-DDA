@@ -1,0 +1,9 @@
+[
+  {
+    "type": "overmap_special",
+    "id": "Nothingness",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "empty" } ],
+    "locations": [ "somewhere" ],
+    "occurrences": [ 0, 0 ]
+  }
+]

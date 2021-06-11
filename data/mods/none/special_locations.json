@@ -1,0 +1,7 @@
+[
+  {
+    "type": "overmap_location",
+    "id": "somewhere",
+    "terrains": [ "empty" ]
+  }
+]
