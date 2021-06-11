@@ -1457,7 +1457,7 @@ void overmap::generate( const overmap *north, const overmap *east,
     place_ravines();
     place_cities();
     place_forest_trails();
-    place_roads( north, east, south, west );
+    //place_roads( north, east, south, west );
     place_specials( enabled_specials );
     place_forest_trailheads();
 

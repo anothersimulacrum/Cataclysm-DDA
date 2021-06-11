@@ -455,33 +455,6 @@
   },
   {
     "type": "material",
-    "id": "flesh",
-    "name": "Flesh",
-    "density": 5,
-    "specific_heat_liquid": 3.7,
-    "specific_heat_solid": 2.15,
-    "latent_heat": 260,
-    "edible": true,
-    "rotting": true,
-    "bash_resist": 1,
-    "cut_resist": 1,
-    "bullet_resist": 1,
-    "acid_resist": 1,
-    "fire_resist": 1,
-    "elec_resist": 1,
-    "chip_resist": 2,
-    "dmg_adj": [ "bruised", "mutilated", "badly mutilated", "thoroughly mutilated" ],
-    "bash_dmg_verb": "bruised",
-    "cut_dmg_verb": "sliced",
-    "vitamins": [ [ "calcium", 0.1 ], [ "vitB", 1 ], [ "iron", 1.3 ] ],
-    "burn_data": [
-      { "fuel": 1, "smoke": 1, "burn": 1, "volume_per_turn": "2500 ml" },
-      { "fuel": 2, "smoke": 3, "burn": 2, "volume_per_turn": "10000 ml" },
-      { "fuel": 3, "smoke": 10, "burn": 3 }
-    ]
-  },
-  {
-    "type": "material",
     "id": "gutskin",
     "name": "Gutskin",
     "density": 5,

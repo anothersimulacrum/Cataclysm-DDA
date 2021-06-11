@@ -1374,6 +1374,7 @@ float Character::stability_roll() const
 
 bool Character::is_dead_state() const
 {
+    return false;
     return get_part_hp_cur( body_part_head ) <= 0 ||
            get_part_hp_cur( body_part_torso ) <= 0;
 }
