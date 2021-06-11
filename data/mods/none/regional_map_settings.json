@@ -2,7 +2,7 @@
   {
     "type": "region_settings",
     "id": "default",
-    "default_oter": "field",
+    "default_oter": "empty",
     "default_groundcover": [ [ "t_nada", 1 ] ],
     "region_terrain_and_furniture": {
       "terrain": {
@@ -127,7 +127,7 @@
       "base_wind": 3.4,
       "base_wind_distrib_peaks": 80,
       "base_wind_season_variation": 50,
-      "weather_types": [ "none", "snowstorm" ]
+      "weather_types": [ "null", "clear" ]
     },
     "overmap_feature_flag_settings": { "clear_blacklist": false, "blacklist": [  ], "clear_whitelist": false, "whitelist": [  ] }
   }
