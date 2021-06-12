@@ -193,7 +193,6 @@ void crafter_examine_actor::call( player *guy, const tripoint &examp ) const
 
 int crafter_examine_actor::query_options( player &guy, const tripoint &examp ) const
 {
-
     map &here = get_map();
 
     bool has_fuel = false;
@@ -465,7 +464,6 @@ void crafter_examine_actor::activate( player &, const tripoint &examp ) const
 {
     map &here = get_map();
 
-
     std::vector<const item *> rejects;
     //item *fuel_item = nullptr;
     for( const item &it : here.i_at( examp ) ) {
@@ -499,10 +497,40 @@ void crafter_examine_actor::disassemble( const tripoint & ) const
 
 void crafter_examine_actor::remove_items( player &, const tripoint & ) const
 {
+    map &here = get_map();
+    map_stack &items_here = here.i_at( examp );
+
+    for( map_stack::iterator it = items_here.begin(); it != items_here.end(); ) {
+        if( it->typeId() != fuel && it->typeId() != fake_item ) {
+            const int handling_cost = -user.item_handling_cost( *it );
+
+            add_msg( remove_fuel_msg.translated(), it->tname() );
+            here.add_item_or_charges( user.pos(), *it );
+            it = items_here.erase( it );
+            user.mod_moves( handling_cost );
+        } else {
+            ++it;
+        }
+    }
 }
 
-void crafter_examine_actor::remove_fuel( player &, const tripoint & ) const
+void crafter_examine_actor::remove_fuel( player &user, const tripoint &examp ) const
 {
+    map &here = get_map();
+    map_stack &items_here = here.i_at( examp );
+
+    for( map_stack::iterator it = items_here.begin(); it != items_here.end(); ) {
+        if( it->typeId() == fuel ) {
+            const int handling_cost = -user.item_handling_cost( *it );
+
+            add_msg( remove_fuel_msg.translated(), it->tname() );
+            here.add_item_or_charges( user.pos(), *it );
+            it = items_here.erase( it );
+            user.mod_moves( handling_cost );
+        } else {
+            ++it;
+        }
+    }
 }
 
 units::volume crafter_examine_actor::free_volume() const

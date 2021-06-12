@@ -192,14 +192,14 @@
     "type": "EXTERNAL_OPTION",
     "name": "GENERIC_PROFESSION_ID",
     "info": "The profession selected by default in the character creator menu.",
-    "stype": "string_input",
+    "stype": "string",
     "value": "unemployed"
   },
   {
     "type": "EXTERNAL_OPTION",
     "name": "GENERIC_SCENARIO_ID",
     "info": "The scenario selected by default in the character creator menu.",
-    "stype": "string_input",
+    "stype": "string",
     "value": "evacuee"
   },
   {
