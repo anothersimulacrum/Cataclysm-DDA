@@ -59,11 +59,12 @@ class crafter_examine_actor : public iexamine_actor
         bool can_disable = false;
 
         furn_id f_transform = f_null;
-        ter_id t_transform = t_null;
 
         itype_id fake_item = itype_id::NULL_ID();
-
         itype_id fuel = itype_id::NULL_ID();
+        itype_id disassemble_item = itype_id::NULL_ID();
+
+        time_duration crafting_time = 6_hours;
 
         int min_fuel = 0;
         int fuel_per_liter = 0;
@@ -105,9 +106,10 @@ class crafter_examine_actor : public iexamine_actor
         translation no_load_active_msg;
         translation load_query_msg;
 
-        units::volume free_volume() const;
+        units::volume free_volume( const tripoint &examp ) const;
 
         void process( const tripoint &examp ) const;
+        void produce_items( const tripoint &examp, const time_point &start_time ) const;
         void show_options( player &guy, const tripoint &examp ) const;
         int query_options( player &guy, const tripoint &examp ) const;
 

@@ -1,5 +1,6 @@
 #include "iexamine_actors.h"
 
+#include "flag.h"
 #include "game.h"
 #include "generic_factory.h"
 #include "itype.h"
@@ -426,9 +427,9 @@ void crafter_examine_actor::load_items( player &guy, const tripoint &examp ) con
     } else {
         count = inv.amount_of( chosen );
     }
-    count = std::min( count, item( chosen ).base_volume() / free_volume() );
+    count = std::min( count, item( chosen ).volume() / free_volume( examp ) );
     const std::string message = string_format( _( "Insert how many of the %s?" ), chosen->nname( 1 ) );
-    int amount = string_input_popup().title( message ).text( to_string( count ) ).only_digits(
+    int amount = string_input_popup().title( message ).text( std::to_string( count ) ).only_digits(
                      true ).query_int();
 
     if( amount == 0 ) {
@@ -483,28 +484,101 @@ void crafter_examine_actor::activate( player &, const tripoint &examp ) const
     }
 }
 
-void crafter_examine_actor::process( const tripoint & ) const
-{
-}
-
-void crafter_examine_actor::transform( const tripoint & ) const
-{
-}
-
-void crafter_examine_actor::disassemble( const tripoint & ) const
-{
-}
-
-void crafter_examine_actor::remove_items( player &, const tripoint & ) const
+void crafter_examine_actor::process( const tripoint &examp ) const
 {
     map &here = get_map();
-    map_stack &items_here = here.i_at( examp );
+    map_stack items_here = here.i_at( examp );
+
+    bool done = false;
+    for( map_stack::iterator it = items_here.begin(); it != items_here.end(); ) {
+        if( it->typeId() == fake_item && ( it->age() >= crafting_time || it->item_counter == 0 ) ) {
+            done = true;
+            break;
+        }
+    }
+
+    if( !done ) {
+        return;
+    }
+}
+
+void crafter_examine_actor::produce_items( const tripoint &examp,
+        const time_point &start_time ) const
+{
+    map &here = get_map();
+    map_stack items = here.i_at( examp );
+    if( items.empty() ) {
+        transform( examp );
+        return;
+    }
+
+    for( item &it : items ) {
+        if( it.has_flag( processing_flag ) ) {
+            if( it.get_comestible()->smoking_result.is_empty() ) {
+                it.unset_flag( flag_PROCESSING );
+            } else {
+                it.calc_rot_while_processing( 6_hours );
+
+                item result( it.get_comestible()->smoking_result, start_time + 6_hours, it.charges );
+
+                // Set flag to tell set_relative_rot() to calc from bday not now
+                result.set_flag( flag_PROCESSING_RESULT );
+                result.set_relative_rot( it.get_relative_rot() );
+                result.unset_flag( flag_PROCESSING_RESULT );
+
+                recipe rec;
+                result.inherit_flags( it, rec );
+                if( !result.has_flag( flag_NUTRIENT_OVERRIDE ) ) {
+                    // If the item has "cooks_like" it will be replaced by that item as a component.
+                    if( !it.get_comestible()->cooks_like.is_empty() ) {
+                        // Set charges to 1 for stacking purposes.
+                        it = item( it.get_comestible()->cooks_like, it.birthday(), 1 );
+                    }
+                    result.components.push_back( it );
+                    // Smoking is always 1:1, so these must be equal for correct kcal/vitamin calculation.
+                    result.recipe_charges = it.charges;
+                    result.set_flag_recursive( flag_COOKED );
+                }
+
+                it = result;
+            }
+        }
+    }
+
+    transform( examp );
+}
+
+void crafter_examine_actor::transform( const tripoint &examp ) const
+{
+    map &here = get_map();
+    if( f_transform != f_null ) {
+        here.furn_set( f_transform );
+    }
+}
+
+void crafter_examine_actor::disassemble( const tripoint &examp ) const
+{
+    if( !portable ) {
+        debugmsg( "Tried to disassemble crafter that cannot be disassembled!" );
+        return;
+    }
+
+    map &here = get_map();
+    here.add_item_or_charges( examp, disassemble_item );
+    here.furn_set( examp, f_null );
+}
+
+static void remove_from_crafter( player &user, const tripoint &examp,
+                                 std::function<bool ( const map_stack::iterator & )> selector, const translation &msg )
+{
+    map &here = get_map();
+    map_stack items_here = here.i_at( examp );
 
     for( map_stack::iterator it = items_here.begin(); it != items_here.end(); ) {
-        if( it->typeId() != fuel && it->typeId() != fake_item ) {
+        if( selector( it ) ) {
             const int handling_cost = -user.item_handling_cost( *it );
 
-            add_msg( remove_fuel_msg.translated(), it->tname() );
+            add_msg( msg.translated(), it->tname() );
             here.add_item_or_charges( user.pos(), *it );
             it = items_here.erase( it );
             user.mod_moves( handling_cost );
@@ -512,30 +586,36 @@ void crafter_examine_actor::remove_items( player &, const tripoint & ) const
             ++it;
         }
     }
+}
+
+void crafter_examine_actor::remove_items( player &user, const tripoint &examp ) const
+{
+    remove_from_crafter( user, examp, [this]( const map_stack::iterator & it ) {
+        return it->typeId() != fuel && it->typeId() != fake_item;
+    }, remove_items_msg );
 }
 
 void crafter_examine_actor::remove_fuel( player &user, const tripoint &examp ) const
 {
-    map &here = get_map();
-    map_stack &items_here = here.i_at( examp );
-
-    for( map_stack::iterator it = items_here.begin(); it != items_here.end(); ) {
-        if( it->typeId() == fuel ) {
-            const int handling_cost = -user.item_handling_cost( *it );
-
-            add_msg( remove_fuel_msg.translated(), it->tname() );
-            here.add_item_or_charges( user.pos(), *it );
-            it = items_here.erase( it );
-            user.mod_moves( handling_cost );
-        } else {
-            ++it;
-        }
-    }
+    remove_from_crafter( user, examp, [this]( const map_stack::iterator & it ) {
+        return it->typeId() == fuel;
+    }, remove_fuel_msg );
 }
 
-units::volume crafter_examine_actor::free_volume() const
+units::volume crafter_examine_actor::free_volume( const tripoint &examp ) const
 {
-    return 0_liter;
+    map &here = get_map();
+    map_stack items_here = here.i_at( examp );
+
+    units::volume free = max_processed_volume;
+
+    for( const item &it : items_here ) {
+        if( it.typeId() != fake_item && it.typeId() != fuel ) {
+            free -= it.volume();
+        }
+    }
+
+    return free;
 }
 
 void crafter_examine_actor::load( const JsonObject &jo )
