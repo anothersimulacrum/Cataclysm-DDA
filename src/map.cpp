@@ -7626,6 +7626,25 @@ void map::spawn_monsters( bool ignore_sight )
     }
 }
 
+std::vector<spawn_point> map::owned_submap_spawns( int z )
+{
+    std::vector<spawn_point> ret;
+    for( int x = 0; x < my_MAPSIZE; x++ ) {
+        for( int y = 0; y < my_MAPSIZE; y++ ) {
+            const tripoint sm_pos( x, y, z );
+            submap *const current_submap = get_submap_at_grid( sm_pos );
+            if( current_submap == nullptr ) {
+                debugmsg( "Tried to get spawns for unloaded submap (%d %d %d)", x, y, z );
+                return ret;
+            }
+            for( const spawn_point &sp : current_submap->spawns ) {
+                ret.push_back( sp );
+            }
+        }
+    }
+    return ret;
+}
+
 void map::clear_spawns()
 {
     for( auto &smap : grid ) {

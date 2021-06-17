@@ -354,6 +354,8 @@ class game
         /** Swaps positions of two creatures */
         bool swap_critters( Creature &, Creature & );
 
+        std::unordered_map<mtype_id, int64_t> spawned;
+
     private:
         friend class monster_range;
         friend class Creature_range;

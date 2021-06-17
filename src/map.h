@@ -68,6 +68,7 @@ struct fragment_cloud;
 struct maptile;
 struct partial_con;
 struct spawn_data;
+struct spawn_point;
 struct trap;
 template<typename Tripoint>
 class tripoint_range;
@@ -1561,6 +1562,8 @@ class map
          * If false, monsters are not spawned in view of player character.
          */
         void spawn_monsters( bool ignore_sight );
+
+        std::vector<spawn_point> owned_submap_spawns( int z = 0 );
 
         /**
         * Checks to see if the item that is rotting away generates a creature when it does.

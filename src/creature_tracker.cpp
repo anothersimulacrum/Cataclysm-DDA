@@ -4,8 +4,11 @@
 #include <ostream>
 #include <utility>
 
+#include <fstream>
+
 #include "cata_assert.h"
 #include "debug.h"
+#include "game.h"
 #include "mongroup.h"
 #include "monster.h"
 #include "mtype.h"
@@ -86,6 +89,18 @@ bool Creature_tracker::add( const shared_ptr_fast<monster> &critter_ptr )
     monsters_list.emplace_back( critter_ptr );
     monsters_by_location[critter.pos()] = critter_ptr;
     add_to_faction_map( critter_ptr );
+    static std::vector<mtype_id> spawns;
+    spawns.push_back( critter_ptr->type->id );
+    auto iter = g->spawned.emplace( critter_ptr->type->id, 1 );
+    if( !iter.second ) {
+        iter.first->second++;
+    }
+    printf( "%s - %lu\n", critter_ptr->type->id.c_str(), spawns.size() );
+    fflush( stdout );
+    std::ofstream foo;
+    foo.open( "AAAAAA", std::ios::app );
+    foo << critter_ptr->type->id.str() << std::endl;
+    foo.close();
     return true;
 }
 
