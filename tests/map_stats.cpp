@@ -10,7 +10,7 @@
 #include "overmapbuffer.h"
 #include "submap.h"
 
-static constexpr int num_overmaps = 1;
+static constexpr int num_overmaps = 12;
 
 void gather_stats( overmap &om );
 
@@ -202,6 +202,15 @@ static void log_csv( std::ofstream &out, const std::unordered_map<K, V> &data )
     }
 }
 
+template<typename K, typename V>
+static void log_oter_csv( std::ofstream &out, const oter_id &id,
+                          const std::unordered_map<K, V> &data )
+{
+    for( const std::pair<const K, V> &datum : data ) {
+        out << id_to_string( id ) << ',' << id_to_string( datum.first ) << ',' << datum.second << "\n";
+    }
+}
+
 void map_statistics::report()
 {
     mons = g->spawned;
@@ -209,25 +218,57 @@ void map_statistics::report()
     std::ofstream furn_report;
     std::ofstream mon_report;
     std::ofstream item_report;
+    std::ofstream oter_report;
+
+    std::ofstream oter_ter_report;
+    std::ofstream oter_furn_report;
+    std::ofstream oter_mon_report;
+    std::ofstream oter_item_report;
 
     int salt = std::chrono::system_clock::now().time_since_epoch().count() % 1000;
     ter_report.open( string_format( "global_ter_%d.csv", salt ) );
     furn_report.open( string_format( "global_furn_%d.csv", salt ) );
     mon_report.open( string_format( "global_mon_%d.csv", salt ) );
     item_report.open( string_format( "global_item_%d.csv", salt ) );
+    oter_report.open( string_format( "global_oter_%d.csv", salt ) );
+
+    oter_ter_report.open( string_format( "oter_ter_%d.csv", salt ) );
+    oter_furn_report.open( string_format( "oter_furn_%d.csv", salt ) );
+    oter_mon_report.open( string_format( "oter_mon_%d.csv", salt ) );
+    oter_item_report.open( string_format( "oter_item_%d.csv", salt ) );
 
     REQUIRE( ter_report.is_open() );
     REQUIRE( furn_report.is_open() );
     REQUIRE( mon_report.is_open() );
     REQUIRE( item_report.is_open() );
+    REQUIRE( oter_report.is_open() );
+
+    REQUIRE( oter_ter_report.is_open() );
+    REQUIRE( oter_furn_report.is_open() );
+    REQUIRE( oter_mon_report.is_open() );
+    REQUIRE( oter_item_report.is_open() );
 
     log_csv( ter_report, ters );
     log_csv( furn_report, furns );
     log_csv( mon_report, mons );
     log_csv( item_report, items );
+    for( const std::pair<const oter_id, map_statblock> &pair : oter_data ) {
+        oter_report << id_to_string( pair.first ) << ',' << pair.second.count << "\n";
+
+        log_oter_csv( oter_ter_report, pair.first, pair.second.ters );
+        log_oter_csv( oter_furn_report, pair.first, pair.second.furns );
+        log_oter_csv( oter_mon_report, pair.first, pair.second.mons );
+        log_oter_csv( oter_item_report, pair.first, pair.second.items );
+    }
 
     ter_report.close();
     furn_report.close();
     mon_report.close();
     item_report.close();
+    oter_report.close();
+
+    oter_ter_report.close();
+    oter_furn_report.close();
+    oter_mon_report.close();
+    oter_item_report.close();
 }
