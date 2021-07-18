@@ -324,6 +324,13 @@ class overmapbuffer
             bool existing_overmaps_only = false,
             const cata::optional<overmap_special_id> &om_special = cata::nullopt );
         /**
+         * Return all the points in a radius
+         * @param center is the center overmap tile of the points
+         * @param radius is the radius of the points, in overmap tile scale
+         */
+        std::vector<tripoint_abs_omt> points_in_radius( const tripoint_abs_omt &center, int radius );
+
+        /**
          * Mark a square area around center on Z-level z
          * as seen.
          * @param center is in absolute overmap terrain coordinates.
@@ -406,7 +413,8 @@ class overmapbuffer
          * triffids!
          */
         void infest_map();
-        int infestation_strength( const tripoint_abs_sm &pt );
+        int infestation_strength( const tripoint_abs_sm &pt ) const;
+        void register_vector( const tripoint_abs_omt &pt );
         /**
          * Signal nearby hordes to move to given location.
          * @param center The origin of the signal, hordes (that recognize the signal) want to go
@@ -515,6 +523,12 @@ class overmapbuffer
         mutable std::set<point_abs_om> known_non_existing;
         // Cached result of previous call to overmapbuffer::get_existing
         overmap mutable *last_requested_overmap;
+
+        /**
+         * Overmap faction influence and terraforming
+         */
+        std::map<tripoint_abs_omt, int> inf_centers;
+        std::unordered_map<tripoint_abs_omt, int> infested;
 
         /**
          * Get a list of notes in the (loaded) overmaps.

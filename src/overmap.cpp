@@ -2145,71 +2145,6 @@ void overmap::move_hordes()
 }
 
 /**
- * infest
- */
-void overmap::infest_map()
-{
-    std::vector<tripoint_abs_omt> all_points;
-    all_points.reserve( OMAPX * OMAPY );
-    const tripoint_abs_omt base( global_base_point(), 0 );
-    for( int x = 0; x < OMAPX; ++x ) {
-        for( int y = 0; y < OMAPY; ++y ) {
-            tripoint_abs_omt here = base;
-            here.x() += x;
-            here.y() += y;
-            all_points.push_back( here );
-        }
-    }
-
-    for( infestation &infest : infestations ) {
-        for( std::pair<const tripoint_abs_omt, int> &center : infest.vectors ) {
-            ++center.second;
-            std::map<int, std::vector<tripoint_abs_omt>> dists;
-            for( const tripoint_abs_omt &cand : all_points ) {
-                int dist = rl_dist( center.first, cand );
-                auto it = dists.insert( {dist, {cand}} );
-                if( !it.second ) {
-                    it.first->second.push_back( cand );
-                }
-            }
-
-            for( const std::pair<const int, std::vector<tripoint_abs_omt>> &cand : dists ) {
-                if( cand.first > center.second ) {
-                    continue;
-                }
-                for( const tripoint_abs_omt &pt : cand.second ) {
-                    auto it = infest.infected.insert( {pt, center.second - cand.first} );
-                    if( !it.second ) {
-                        it.first->second = center.second - cand.first;
-                    }
-                }
-            }
-        }
-    }
-
-    for( infestation &infest : infestations ) {
-        for( const std::pair<const tripoint_abs_omt, int> &infection : infest.infected ) {
-            if( infection.second > 20 ) {
-                const tripoint_om_omt where( infection.first.raw() - global_base_point().raw() );
-                //ter_set( where, oter_id( "fungalize" ) );
-            }
-        }
-    }
-
-}
-
-int overmap::infestation_strength( const tripoint_abs_omt &pt )
-{
-    if( infestations.empty() ) {
-        return 0;
-    }
-    if( infestations.back().infected.count( pt ) == 0 ) {
-        return 0;
-    }
-    return infestations.back().infected.at( pt );
-}
-
-/**
 * @param p location of signal relative to this overmap origin
 * @param sig_power - power of signal or max distance for reaction of zombies
 */
@@ -4222,15 +4157,7 @@ void overmap::place_special(
     cata::optional<mapgen_arguments> *mapgen_args_p = &*mapgen_arg_storage.emplace();
 
     if( special.flags.count( "VECTOR" ) > 0 ) {
-        if( infestations.empty() ) {
-            infestations.push_back( {} );
-        }
-        infestations.back().vectors.insert( {tripoint_abs_omt( global_base_point().raw() + p.raw() ), 0} );
-        printf( "VECTORS: " );
-        for( const std::pair<const tripoint_abs_omt, int> &a : infestations.back().vectors ) {
-            printf( "(%d %d %d) ", a.first.x(), a.first.y(), a.first.z() );
-        }
-        printf( "\n" );
+        overmap_buffer.register_vector( tripoint_abs_omt( global_base_point().raw() + p.raw() ) );
     }
 
     for( const auto &elem : special.terrains ) {

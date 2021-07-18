@@ -101,6 +101,7 @@ WARNINGS = \
   -Wformat-signedness \
   -Wlogical-op \
   -Wmissing-declarations \
+  -fno-omit-frame-pointer \
   -Wmissing-noreturn \
   -Wnon-virtual-dtor \
   -Wold-style-cast \

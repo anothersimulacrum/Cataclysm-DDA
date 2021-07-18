@@ -474,23 +474,49 @@ std::vector<om_vehicle> overmapbuffer::get_vehicle( const tripoint_abs_omt &p )
     return result;
 }
 
+std::vector<tripoint_abs_omt> overmapbuffer::points_in_radius( const tripoint_abs_omt &center,
+        const int radius )
+{
+    std::vector<tripoint_abs_omt> ret;
+    for( int x = -radius; x <= radius; ++x ) {
+        for( int y = -radius; y <= radius; ++y ) {
+            const tripoint_abs_omt checked = center + point( x, y );
+            if( rl_dist( center, checked ) <= radius ) {
+                ret.push_back( checked );
+            }
+        }
+    }
+    return ret;
+}
+
 void overmapbuffer::infest_map()
 {
     const tripoint_abs_sm player_pos( get_player_character().global_sm_location() );
-    for( overmap *const om : get_overmaps_near( player_pos, OMAPX * 2 * 2 ) ) {
-        om->infest_map();
+    const tripoint_abs_omt where( sm_to_omt_copy( player_pos.raw() ) );
+    for( std::pair<const tripoint_abs_omt, int> &center : inf_centers ) {
+        ++center.second;
+        for( const tripoint_abs_omt &pt : points_in_radius( center.first, center.second ) ) {
+            auto it = infested.emplace( pt, center.second - rl_dist( center.first, pt ) );
+            if( !it.second ) {
+                ++it.first->second;
+            }
+        }
     }
 }
 
-int overmapbuffer::infestation_strength( const tripoint_abs_sm &pt )
+int overmapbuffer::infestation_strength( const tripoint_abs_sm &pt ) const
 {
     const tripoint_abs_omt where( sm_to_omt_copy( pt.raw() ) );
-    const overmap_with_local_coords om_loc = get_om_global( where );
-    if( !om_loc ) {
-        return 0;
+    const auto it = infested.find( where );
+    if( it != infested.end() ) {
+        return it->second;
     }
+    return 0;
+}
 
-    return om_loc.om->infestation_strength( where );
+void overmapbuffer::register_vector( const tripoint_abs_omt &pt )
+{
+    inf_centers.insert( {pt, 0} );
 }
 
 void overmapbuffer::signal_hordes( const tripoint_abs_sm &center, const int sig_power )
