@@ -21,6 +21,15 @@
   },
   {
     "type": "overmap_terrain",
+    "id": "fungalized",
+    "name": "fungal terrain",
+    "sym": ".",
+    "color": "light_gray",
+    "see_cost": 2,
+    "flags": [ "NO_ROTATE", "RISK_HIGH" ]
+  },
+  {
+    "type": "overmap_terrain",
     "id": "fungal_flowers",
     "name": "fungal flowers",
     "sym": "T",

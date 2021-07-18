@@ -59,6 +59,12 @@ struct city {
     int get_distance_from( const tripoint_om_omt &p ) const;
 };
 
+struct infestation {
+    std::map<tripoint_abs_omt, int> vectors;
+
+    std::unordered_map<tripoint_abs_omt, int> infected;
+};
+
 struct om_note {
     std::string text;
     point_om_omt p;
@@ -333,6 +339,7 @@ class overmap
         std::map<int, om_vehicle> vehicles;
         std::vector<basecamp> camps;
         std::vector<city> cities;
+        std::vector<infestation> infestations;
         std::map<string_id<overmap_connection>, std::vector<tripoint_om_omt>> connections_out;
         cata::optional<basecamp *> find_camp( const point_abs_omt &p );
         /// Adds the npc to the contained list of npcs ( @ref npcs ).
@@ -415,6 +422,9 @@ class overmap
         void generate_bridgeheads( const std::vector<point_om_omt> &bridge_points );
 
         const city &get_nearest_city( const tripoint_om_omt &p ) const;
+
+        void infest_map();
+        int infestation_strength( const tripoint_abs_omt &pt );
 
         void signal_hordes( const tripoint_rel_sm &p, int sig_power );
         void process_mongroups();

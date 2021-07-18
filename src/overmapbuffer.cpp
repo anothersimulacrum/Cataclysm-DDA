@@ -474,6 +474,25 @@ std::vector<om_vehicle> overmapbuffer::get_vehicle( const tripoint_abs_omt &p )
     return result;
 }
 
+void overmapbuffer::infest_map()
+{
+    const tripoint_abs_sm player_pos( get_player_character().global_sm_location() );
+    for( overmap *const om : get_overmaps_near( player_pos, OMAPX * 2 * 2 ) ) {
+        om->infest_map();
+    }
+}
+
+int overmapbuffer::infestation_strength( const tripoint_abs_sm &pt )
+{
+    const tripoint_abs_omt where( sm_to_omt_copy( pt.raw() ) );
+    const overmap_with_local_coords om_loc = get_om_global( where );
+    if( !om_loc ) {
+        return 0;
+    }
+
+    return om_loc.om->infestation_strength( where );
+}
+
 void overmapbuffer::signal_hordes( const tripoint_abs_sm &center, const int sig_power )
 {
     const int radius = sig_power;

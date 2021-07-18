@@ -833,6 +833,8 @@ bool do_turn()
         m.spawn_monsters( false );
     }
 
+    overmap_buffer.infest_map();
+
     g->debug_hour_timer.print_time();
 
     u.update_body();

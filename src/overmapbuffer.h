@@ -403,6 +403,11 @@ class overmapbuffer
             return get_extras( z, &pattern ); // filter with pattern
         }
         /**
+         * triffids!
+         */
+        void infest_map();
+        int infestation_strength( const tripoint_abs_sm &pt );
+        /**
          * Signal nearby hordes to move to given location.
          * @param center The origin of the signal, hordes (that recognize the signal) want to go
          * to there. In global submap coordinates.

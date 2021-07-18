@@ -541,6 +541,7 @@ class map
          * Note: the map must have been loaded before this can be called.
          */
         void shift( const point &s );
+        void infested_shift( const tripoint &grid );
         /**
          * Moves the map vertically to (not by!) newz.
          * Does not actually shift anything, only forces cache updates.

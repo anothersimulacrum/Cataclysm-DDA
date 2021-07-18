@@ -60,6 +60,13 @@
     "autonote": true
   },
   {
+    "id": "mx_fungal",
+    "type": "map_extra",
+    "name": { "str": "FUNGAL" },
+    "description": "FUNGAL",
+    "generator": { "generator_method": "map_extra_function", "generator_id": "mx_fungal" }
+  },
+  {
     "id": "mx_bandits_block",
     "type": "map_extra",
     "name": { "str": "Roadblock (Bandits)" },

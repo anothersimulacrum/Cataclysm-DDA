@@ -58,6 +58,7 @@
 #include "lightmap.h"
 #include "line.h"
 #include "location.h"
+#include "map_extras.h"
 #include "map_iterator.h"
 #include "map_memory.h"
 #include "map_selector.h"
@@ -6630,6 +6631,7 @@ void map::shift( const point &sp )
                             update_vehicle_list( cur_submap, gridz );
                         } else {
                             loadn( tripoint( gridx, gridy, gridz ), true );
+                            infested_shift( tripoint( gridx, gridy, gridz ) );
                         }
                     }
                 } else { // sy < 0; work through it backwards
@@ -6649,6 +6651,7 @@ void map::shift( const point &sp )
                             update_vehicle_list( cur_submap, gridz );
                         } else {
                             loadn( tripoint( gridx, gridy, gridz ), true );
+                            infested_shift( tripoint( gridx, gridy, gridz ) );
                         }
                     }
                 }
@@ -6672,6 +6675,7 @@ void map::shift( const point &sp )
                             update_vehicle_list( cur_submap, gridz );
                         } else {
                             loadn( tripoint( gridx, gridy, gridz ), true );
+                            infested_shift( tripoint( gridx, gridy, gridz ) );
                         }
                     }
                 } else { // sy < 0; work through it backwards
@@ -6691,6 +6695,7 @@ void map::shift( const point &sp )
                             update_vehicle_list( cur_submap, gridz );
                         } else {
                             loadn( tripoint( gridx, gridy, gridz ), true );
+                            infested_shift( tripoint( gridx, gridy, gridz ) );
                         }
                     }
                 }
@@ -6708,6 +6713,24 @@ void map::shift( const point &sp )
         for( const auto &pt : old_cache ) {
             support_cache_dirty.insert( pt + point( -sp.x * SEEX, -sp.y * SEEY ) );
         }
+    }
+}
+
+void map::infested_shift( const tripoint &grid )
+{
+    const tripoint grid_abs_sub( abs_sub.xy() + grid );
+    const tripoint_abs_omt grid_abs_omt( sm_to_omt_copy( grid_abs_sub ) );
+    const tripoint grid_abs_sub_rounded = omt_to_sm_copy( grid_abs_omt.raw() );
+
+    if( overmap_buffer.infestation_strength( tripoint_abs_sm( grid_abs_sub_rounded ) ) ) {
+        tinymap mx_map;
+        tripoint_abs_sm map_pt( grid_abs_sub_rounded );
+        mx_map.load( map_pt, false );
+        MapExtras::apply_function( string_id<map_extra>( "mx_fungal" ), mx_map, map_pt );
+    }
+
+    if( overmap_buffer.infestation_strength( tripoint_abs_sm( grid_abs_sub_rounded ) ) > 20 ) {
+        overmap_buffer.ter_set( grid_abs_omt, oter_id( "fungalized" ) );
     }
 }
 
@@ -6806,16 +6829,16 @@ void map::loadn( const tripoint &grid, const bool update_vehicles, bool _actuali
     const int old_abs_z = abs_sub.z; // Ugly, but necessary at the moment
     abs_sub.z = grid.z;
 
+    // Each overmap square is two nonants; to prevent overlap, generate only at
+    //  squares divisible by 2.
+    // TODO: fix point types
+    const tripoint_abs_omt grid_abs_omt( sm_to_omt_copy( grid_abs_sub ) );
+    const tripoint grid_abs_sub_rounded = omt_to_sm_copy( grid_abs_omt.raw() );
+
     submap *tmpsub = MAPBUFFER.lookup_submap( grid_abs_sub );
     if( tmpsub == nullptr ) {
         // It doesn't exist; we must generate it!
         dbg( D_INFO | D_WARNING ) << "map::loadn: Missing mapbuffer data.  Regenerating.";
-
-        // Each overmap square is two nonants; to prevent overlap, generate only at
-        //  squares divisible by 2.
-        // TODO: fix point types
-        const tripoint_abs_omt grid_abs_omt( sm_to_omt_copy( grid_abs_sub ) );
-        const tripoint grid_abs_sub_rounded = omt_to_sm_copy( grid_abs_omt.raw() );
 
         const oter_id terrain_type = overmap_buffer.ter( grid_abs_omt );
 

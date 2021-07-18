@@ -620,6 +620,23 @@ static bool mx_collegekids( map &m, const tripoint & )
     return true;
 }
 
+static bool mx_fungal( map &m, const tripoint &abs_sub )
+{
+    // TODO: fix point types
+    const tripoint_abs_omt abs_omt( sm_to_omt_copy( abs_sub ) );
+    fungal_effects fungus( *g, m );
+
+    for( int x = 0; x < SEEX * 2; ++x ) {
+        for( int y = 0; y < SEEY * 2; ++y ) {
+            for( int i = 0; i < 20; ++i ) {
+                fungus.fungalize( tripoint( x, y, 0 ) );
+            }
+        }
+    }
+
+    return true;
+}
+
 static bool mx_roadblock( map &m, const tripoint &abs_sub )
 {
     // TODO: fix point types
@@ -2990,6 +3007,7 @@ FunctionMap builtin_functions = {
     { "mx_roadworks", mx_roadworks },
     { "mx_mayhem", mx_mayhem },
     { "mx_roadblock", mx_roadblock },
+    { "mx_fungal", mx_fungal },
     { "mx_bandits_block", mx_bandits_block },
     { "mx_minefield", mx_minefield },
     { "mx_supplydrop", mx_supplydrop },
