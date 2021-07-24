@@ -38,6 +38,7 @@ jobs:
         localize: [1]
         native: [linux64]
 
+        include:
           - compiler: g++-8
             os: ubuntu-latest
             sanitize: address
