@@ -1861,7 +1861,7 @@ class item : public visitable
         /**
          * Set the gun variant of this item
          */
-        void set_gun_variant( const std::string &variant );
+        void set_variant( const std::string &variant );
 
         /**
          * For debug use only
