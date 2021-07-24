@@ -38,22 +38,6 @@ jobs:
         localize: [1]
         native: [linux64]
 
-        include:
-          - compiler: g++-11
-            os: ubuntu-latest
-            tiles: 0
-            test-stage: 1
-            gold: 1
-            lto: 1
-            title: GCC 11, Ubuntu, Curses, LTO
-
-          - compiler: g++-7
-            os: ubuntu-18.04
-            cmake: 1
-            mods: --mods=magiclysm
-            localize: 0
-            title: GCC 7, Ubuntu, Tiles, CMake, Release
-
           - compiler: g++-8
             os: ubuntu-latest
             sanitize: address
@@ -61,21 +45,10 @@ jobs:
             title: GCC 8, Ubuntu, Tiles, ASan, Release
             num_test_jobs: 1
 
-          - compiler: clang++-6.0
-            os: ubuntu-18.04
-            tiles: 0
-            release: 1
-            title: Clang 6, Ubuntu, Curses, Release
-
           - compiler: clang++-12
             os: ubuntu-latest
             sanitize: address,undefined
             title: Clang 12, Ubuntu, Tiles, ASan, UBSan
-
-          - compiler: clang++
-            os: macos-10.15
-            native: osx
-            title: Clang 12, macOS 10.15, Tiles
 
     name: ${{ matrix.title }}
     runs-on: ${{ matrix.os }}
