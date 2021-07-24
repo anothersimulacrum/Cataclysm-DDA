@@ -77,13 +77,6 @@ jobs:
             native: osx
             title: Clang 12, macOS 10.15, Tiles
 
-          - compiler: g++
-            os: ubuntu-latest
-            native:
-            title: GCC, Ubuntu cross-compile to MinGW-Win64, Tiles
-            ldflags: -static-libgcc -static-libstdc++
-            mxe_target: i686-w64-mingw32.static
-            wine: wine
     name: ${{ matrix.title }}
     runs-on: ${{ matrix.os }}
     env:
