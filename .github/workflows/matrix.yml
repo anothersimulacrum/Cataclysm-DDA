@@ -165,5 +165,5 @@ jobs:
       if: failure()
       with:
         name: cata_test
-        path: /usr/bin/time -v tests/cata_test
+        path: tests/cata_test
         if-no-files-found: ignore
