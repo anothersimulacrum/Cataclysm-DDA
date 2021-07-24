@@ -6945,7 +6945,7 @@ void item::select_gun_variant()
         return;
     }
 
-    set_gun_variant( *selected );
+    set_variant( *selected );
 }
 
 bool item::can_have_gun_variant() const
@@ -6990,7 +6990,7 @@ const gun_variant_data &item::gun_variant() const
     return *_gun_variant;
 }
 
-void item::set_gun_variant( const std::string &variant )
+void item::set_variant( const std::string &variant )
 {
     if( variant.empty() || ( is_gun() && type->gun->variants.empty() ) || ( !!type->magazine &&
             type->magazine->variants.empty() ) ) {

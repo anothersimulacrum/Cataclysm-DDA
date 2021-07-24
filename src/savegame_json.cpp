@@ -2479,7 +2479,7 @@ void item::io( Archive &archive )
     } );
     archive.io( "craft_data", craft_data_, decltype( craft_data_ )() );
     const auto gvload = [this]( const std::string & variant ) {
-        set_gun_variant( variant );
+        set_variant( variant );
     };
     const auto gvsave = []( const gun_variant_data * gv ) {
         return gv->id;
@@ -2678,7 +2678,7 @@ void item::deserialize( JsonIn &jsin )
 
     if( !has_gun_variant( false ) && can_have_gun_variant() ) {
         if( possible_gun_variant( typeId().str() ) ) {
-            set_gun_variant( typeId().str() );
+            set_variant( typeId().str() );
         } else {
             select_gun_variant();
         }

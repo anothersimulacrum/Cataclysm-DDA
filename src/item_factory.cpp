@@ -3126,7 +3126,7 @@ void Item_factory::migrate_item( const itype_id &id, item &obj )
             obj.charges = iter->second.charges;
         }
 
-        obj.set_gun_variant( iter->second.variant );
+        obj.set_variant( iter->second.variant );
 
         for( const migration::content &it : iter->second.contents ) {
             int count = it.count;
