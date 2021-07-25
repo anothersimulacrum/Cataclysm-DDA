@@ -116,6 +116,7 @@ TEST_CASE( "starve_test", "[starve][slow]" )
     std::vector<std::string> results;
     int ret = 0;
     printf( "starve_test 1\n" );
+    fflush(stdout);
     ret = system( "free" );
 
     do {
@@ -127,6 +128,7 @@ TEST_CASE( "starve_test", "[starve][slow]" )
         day++;
     } while( dummy.get_stored_kcal() > 0 && day < expected_day * 2 );
     printf( "starve_test 2\n" );
+    fflush(stdout);
     ret = system( "free" );
     ( void ) ret;
     CAPTURE( results );
@@ -159,6 +161,7 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
 
     int ret = 0;
     printf( "starve_test_hunger3 1\n" );
+    fflush(stdout);
     ret = system( "free" );
 
     do {
@@ -170,6 +173,7 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
         day++;
     } while( dummy.get_stored_kcal() > 0 );
     printf( "starve_test_hunger3 2\n" );
+    fflush(stdout);
     ret = system( "free" );
     ( void ) ret;
 
@@ -192,6 +196,7 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     }
     int ret = 0;
     printf( "all_nutrition_starve_test 1\n" );
+    fflush(stdout);
     ret = system( "free" );
 
     for( unsigned int day = 0; day <= 20; day++ ) {
@@ -222,6 +227,7 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     CHECK( dummy.vitamin_get( vitamin_id( "iron" ) ) >= -100 );
     CHECK( dummy.vitamin_get( vitamin_id( "calcium" ) ) >= -100 );
     printf( "all_nutrition_starve_test 2\n" );
+    fflush(stdout);
     ret = system( "free" );
     ( void ) ret;
 }

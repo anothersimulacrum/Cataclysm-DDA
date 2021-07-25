@@ -131,6 +131,7 @@ TEST_CASE( "starting_items", "[slow]" )
 
     int ret = 0;
     printf( "newchar 1\n" );
+    fflush(stdout);
     ret = system( "free" );
 
     std::set<failure> failures;
@@ -145,6 +146,7 @@ TEST_CASE( "starting_items", "[slow]" )
     for( ; !traits.empty(); traits = next_subset( mutations ) ) {
         ++i;
         printf( "newchar %d\n", i );
+    fflush(stdout);
         ret = system( "free" );
         CAPTURE( traits );
         for( const auto &pair : scen_prof_combos ) {
@@ -199,6 +201,7 @@ TEST_CASE( "starting_items", "[slow]" )
                          " " << f.item_name.str() << ": " << f.reason << "\n";
     }
     printf( "newchar end\n" );
+    fflush(stdout);
     ret = system( "free" );
     INFO( failure_messages.str() );
     REQUIRE( failures.empty() );
