@@ -144,14 +144,17 @@ static void check_vehicle_damage( const std::string &explosive_id, const std::st
 
 TEST_CASE( "grenade_lethality", "[grenade],[explosion],[balance],[slow]" )
 {
-    printf( "grenade 1\n" );
-    system( "free" );
+    int ret = 0;
     check_lethality( "grenade_act", 0, 0.99, 0.06, outcome_type::Kill );
+    printf( "grenade 1\n" );
+    ret = system( "free" );
+    check_lethality( "grenade_act", 5, 0.95, 0.06, outcome_type::Kill );
     printf( "grenade 2\n" );
-    system( "free" );
+    ret = system( "free" );
     check_lethality( "grenade_act", 15, 0.40, 0.06, outcome_type::Casualty );
     printf( "grenade 3\n" );
-    system( "free" );
+    ret = system( "free" );
+    ( void ) ret;
 }
 
 TEST_CASE( "grenade_vs_vehicle", "[grenade],[explosion],[balance]" )
