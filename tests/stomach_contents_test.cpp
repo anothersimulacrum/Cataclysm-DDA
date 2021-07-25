@@ -119,7 +119,12 @@ TEST_CASE( "starve_test", "[starve][slow]" )
     fflush(stdout);
     ret = system( "free" );
 
+    int i = 1;
     do {
+	    ++i;
+    printf( "starve_test %d\n", i );
+    fflush( stdout );
+    ret = system( "free" );
         results.push_back( string_format( "\nday %d: %d", day, dummy.get_stored_kcal() ) );
         pass_time( dummy, 1_days );
         dummy.set_thirst( 0 );
@@ -127,8 +132,8 @@ TEST_CASE( "starve_test", "[starve][slow]" )
         set_all_vitamins( 0, dummy );
         day++;
     } while( dummy.get_stored_kcal() > 0 && day < expected_day * 2 );
-    printf( "starve_test 2\n" );
-    fflush(stdout);
+    printf( "starve_test end\n" );
+    fflush( stdout );
     ret = system( "free" );
     ( void ) ret;
     CAPTURE( results );
@@ -164,7 +169,12 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
     fflush(stdout);
     ret = system( "free" );
 
+    int i = 1;
     do {
+	    ++i;
+    printf( "starve_test_hunger3 %d\n", i );
+    fflush( stdout );
+    ret = system( "free" );
         results.push_back( string_format( "\nday %d: %d", day, dummy.get_stored_kcal() ) );
         pass_time( dummy, 1_days );
         dummy.set_thirst( 0 );
@@ -172,8 +182,8 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
         set_all_vitamins( 0, dummy );
         day++;
     } while( dummy.get_stored_kcal() > 0 );
-    printf( "starve_test_hunger3 2\n" );
-    fflush(stdout);
+    printf( "starve_test_hunger3 end\n" );
+    fflush( stdout );
     ret = system( "free" );
     ( void ) ret;
 
@@ -199,7 +209,12 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     fflush(stdout);
     ret = system( "free" );
 
+    int i = 1;
     for( unsigned int day = 0; day <= 20; day++ ) {
+	    ++i;
+    printf( "all_nutrition_starve_test %d\n" );
+    fflush( stdout );
+    ret = system( "free" );
         if( print_tests ) {
             printf( "day %u: %d\n", day, dummy.get_stored_kcal() );
         }
@@ -226,8 +241,8 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     CHECK( dummy.vitamin_get( vitamin_id( "vitC" ) ) >= -100 );
     CHECK( dummy.vitamin_get( vitamin_id( "iron" ) ) >= -100 );
     CHECK( dummy.vitamin_get( vitamin_id( "calcium" ) ) >= -100 );
-    printf( "all_nutrition_starve_test 2\n" );
-    fflush(stdout);
+    printf( "all_nutrition_starve_test end\n" );
+    fflush( stdout );
     ret = system( "free" );
     ( void ) ret;
 }
