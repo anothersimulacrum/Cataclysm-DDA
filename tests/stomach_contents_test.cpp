@@ -114,6 +114,8 @@ TEST_CASE( "starve_test", "[starve][slow]" )
     constexpr int expected_day = 36;
     int day = 0;
     std::vector<std::string> results;
+    printf( "starve_test 1\n" );
+    system( "free" );
 
     do {
         results.push_back( string_format( "\nday %d: %d", day, dummy.get_stored_kcal() ) );
@@ -123,6 +125,8 @@ TEST_CASE( "starve_test", "[starve][slow]" )
         set_all_vitamins( 0, dummy );
         day++;
     } while( dummy.get_stored_kcal() > 0 && day < expected_day * 2 );
+    printf( "starve_test 2\n" );
+    system( "free" );
     CAPTURE( results );
     CHECK( day == expected_day );
 }
@@ -151,6 +155,9 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
     std::vector<std::string> results;
     unsigned int day = 0;
 
+    printf( "starve_test_hunger3 1\n" );
+    system( "free" );
+
     do {
         results.push_back( string_format( "\nday %d: %d", day, dummy.get_stored_kcal() ) );
         pass_time( dummy, 1_days );
@@ -159,6 +166,8 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
         set_all_vitamins( 0, dummy );
         day++;
     } while( dummy.get_stored_kcal() > 0 );
+    printf( "starve_test_hunger3 2\n" );
+    system( "free" );
 
     CAPTURE( results );
     CHECK( day <= 12 );
@@ -177,6 +186,8 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     if( print_tests ) {
         printf( "\n\n" );
     }
+    printf( "all_nutrition_starve_test 1\n" );
+    system( "free" );
 
     for( unsigned int day = 0; day <= 20; day++ ) {
         if( print_tests ) {
@@ -205,6 +216,8 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     CHECK( dummy.vitamin_get( vitamin_id( "vitC" ) ) >= -100 );
     CHECK( dummy.vitamin_get( vitamin_id( "iron" ) ) >= -100 );
     CHECK( dummy.vitamin_get( vitamin_id( "calcium" ) ) >= -100 );
+    printf( "all_nutrition_starve_test 2\n" );
+    system( "free" );
 }
 
 TEST_CASE( "tape_worm_halves_nutrients" )
