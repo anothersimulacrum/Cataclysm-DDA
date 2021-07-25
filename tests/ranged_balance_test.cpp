@@ -230,37 +230,51 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
     shooter.worn.emplace_back( "backpack" );
     equip_shooter( shooter, { "bastsandals", "armguard_chitin", "armor_chitin", "beekeeping_gloves", "mask_guy_fawkes", "cowboy_hat" } );
     assert_encumbrance( shooter, 10 );
+    printf( "unskilled shot 1\n" );
+    system( "free" );
 
     SECTION( "an unskilled shooter with an inaccurate pistol" ) {
         arm_shooter( shooter, "glock_19" );
         test_shooting_scenario( shooter, 4, 5, 15 );
         test_fast_shooting( shooter, 40, 0.3 );
     }
+    printf( "unskilled shot 2\n" );
+    system( "free" );
     SECTION( "an unskilled archer with an inaccurate bow" ) {
         arm_shooter( shooter, "shortbow", { "bow_sight_pin" }, "arrow_field_point_fletched" );
         test_shooting_scenario( shooter, 3, 3, 12 );
         test_fast_shooting( shooter, 50, 0.2 );
     }
+    printf( "unskilled shot 3\n" );
+    system( "free" );
     SECTION( "an unskilled archer with an inaccurate crossbow" ) {
         arm_shooter( shooter, "crossbow", {}, "bolt_makeshift" );
         test_shooting_scenario( shooter, 4, 6, 17 );
         test_fast_shooting( shooter, 50, 0.2 );
     }
+    printf( "unskilled shot 4\n" );
+    system( "free" );
     SECTION( "an unskilled shooter with an inaccurate shotgun" ) {
         arm_shooter( shooter, "winchester_1897" );
         test_shooting_scenario( shooter, 4, 6, 17 );
         test_fast_shooting( shooter, 50, 0.3 );
     }
+    printf( "unskilled shot 5\n" );
+    system( "free" );
     SECTION( "an unskilled shooter with an inaccurate smg" ) {
         arm_shooter( shooter, "tommygun" );
         test_shooting_scenario( shooter, 4, 6, 18 );
         test_fast_shooting( shooter, 70, 0.3 );
     }
+    printf( "unskilled shot 6\n" );
+    system( "free" );
     SECTION( "an unskilled shooter with an inaccurate rifle" ) {
         arm_shooter( shooter, "m1918" );
         test_shooting_scenario( shooter, 5, 9, 25 );
         test_fast_shooting( shooter, 80, 0.2 );
     }
+    printf( "unskilled shot 7\n" );
+    system( "free" );
 }
 
 TEST_CASE( "competent_shooter_accuracy", "[ranged] [balance]" )

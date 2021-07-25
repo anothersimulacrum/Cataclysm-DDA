@@ -36,6 +36,8 @@ TEST_CASE( "set_and_get_overmap_scents" )
 
 TEST_CASE( "default_overmap_generation_always_succeeds", "[slow]" )
 {
+    printf( "overmapgen 1 1\n" );
+    system( "free" );
     int overmaps_to_construct = 10;
     for( const point_abs_om &candidate_addr : closest_points_first( point_abs_om(), 10 ) ) {
         // Skip populated overmaps.
@@ -54,12 +56,16 @@ TEST_CASE( "default_overmap_generation_always_succeeds", "[slow]" )
             break;
         }
     }
+    printf( "overmapgen 1 2\n" );
+    system( "free" );
     overmap_buffer.clear();
 }
 
 TEST_CASE( "default_overmap_generation_has_non_mandatory_specials_at_origin", "[slow]" )
 {
     const point_abs_om origin{};
+    printf( "overmapgen 2 1\n" );
+    system( "free" );
 
     overmap_special mandatory;
     overmap_special optional;
@@ -103,6 +109,8 @@ TEST_CASE( "default_overmap_generation_has_non_mandatory_specials_at_origin", "[
             }
         }
     }
+    printf( "overmapgen 2 2\n" );
+    system( "free" );
 
     INFO( "Failed to place optional special on origin " );
     CHECK( found_optional == true );

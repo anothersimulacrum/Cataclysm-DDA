@@ -129,6 +129,9 @@ TEST_CASE( "starting_items", "[slow]" )
         scen_prof_combos[scenario::generic()].push_back( id );
     }
 
+    printf( "newchar 1\n" );
+    system( "free" );
+
     std::set<failure> failures;
 
     avatar &player_character = get_avatar();
@@ -137,7 +140,11 @@ TEST_CASE( "starting_items", "[slow]" )
     const avatar control = get_sanitized_player();
 
     std::vector<trait_id> traits = next_subset( mutations );
+    int i = 1;
     for( ; !traits.empty(); traits = next_subset( mutations ) ) {
+        ++i;
+        printf( "newchar %d\n", i );
+        system( "free" );
         CAPTURE( traits );
         for( const auto &pair : scen_prof_combos ) {
             set_scenario( pair.first );
@@ -190,6 +197,8 @@ TEST_CASE( "starting_items", "[slow]" )
         failure_messages << f.prof.c_str() << " " << f.mut <<
                          " " << f.item_name.str() << ": " << f.reason << "\n";
     }
+    printf( "newchar end\n" );
+    system( "free" );
     INFO( failure_messages.str() );
     REQUIRE( failures.empty() );
 }
