@@ -232,6 +232,7 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
     assert_encumbrance( shooter, 10 );
     int ret = 0;
     printf( "unskilled shot 1\n" );
+    fflush(stdout);
     ret = system( "free" );
 
     SECTION( "an unskilled shooter with an inaccurate pistol" ) {
@@ -240,6 +241,7 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
         test_fast_shooting( shooter, 40, 0.3 );
     }
     printf( "unskilled shot 2\n" );
+    fflush(stdout);
     ret = system( "free" );
     SECTION( "an unskilled archer with an inaccurate bow" ) {
         arm_shooter( shooter, "shortbow", { "bow_sight_pin" }, "arrow_field_point_fletched" );
@@ -247,6 +249,7 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
         test_fast_shooting( shooter, 50, 0.2 );
     }
     printf( "unskilled shot 3\n" );
+    fflush(stdout);
     ret = system( "free" );
     SECTION( "an unskilled archer with an inaccurate crossbow" ) {
         arm_shooter( shooter, "crossbow", {}, "bolt_makeshift" );
@@ -254,6 +257,7 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
         test_fast_shooting( shooter, 50, 0.2 );
     }
     printf( "unskilled shot 4\n" );
+    fflush(stdout);
     ret = system( "free" );
     SECTION( "an unskilled shooter with an inaccurate shotgun" ) {
         arm_shooter( shooter, "winchester_1897" );
@@ -261,6 +265,7 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
         test_fast_shooting( shooter, 50, 0.3 );
     }
     printf( "unskilled shot 5\n" );
+    fflush(stdout);
     ret = system( "free" );
     SECTION( "an unskilled shooter with an inaccurate smg" ) {
         arm_shooter( shooter, "tommygun" );
@@ -268,6 +273,7 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
         test_fast_shooting( shooter, 70, 0.3 );
     }
     printf( "unskilled shot 6\n" );
+    fflush(stdout);
     ret = system( "free" );
     SECTION( "an unskilled shooter with an inaccurate rifle" ) {
         arm_shooter( shooter, "m1918" );
@@ -275,6 +281,7 @@ TEST_CASE( "unskilled_shooter_accuracy", "[ranged] [balance] [slow]" )
         test_fast_shooting( shooter, 80, 0.2 );
     }
     printf( "unskilled shot 7\n" );
+    fflush(stdout);
     ret = system( "free" );
     ( void ) ret;
 }
