@@ -147,15 +147,15 @@ TEST_CASE( "grenade_lethality", "[grenade],[explosion],[balance],[slow]" )
     int ret = 0;
     check_lethality( "grenade_act", 0, 0.99, 0.06, outcome_type::Kill );
     printf( "grenade 1\n" );
-    fflush(stdout);
+    fflush( stdout );
     ret = system( "free" );
     check_lethality( "grenade_act", 5, 0.95, 0.06, outcome_type::Kill );
     printf( "grenade 2\n" );
-    fflush(stdout);
+    fflush( stdout );
     ret = system( "free" );
     check_lethality( "grenade_act", 15, 0.40, 0.06, outcome_type::Casualty );
     printf( "grenade 3\n" );
-    fflush(stdout);
+    fflush( stdout );
     ret = system( "free" );
     ( void ) ret;
 }
