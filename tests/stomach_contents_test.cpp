@@ -121,10 +121,10 @@ TEST_CASE( "starve_test", "[starve][slow]" )
 
     int i = 1;
     do {
-	    ++i;
-    printf( "starve_test %d\n", i );
-    fflush( stdout );
-    ret = system( "free" );
+        ++i;
+        printf( "starve_test %d\n", i );
+        fflush( stdout );
+        ret = system( "free" );
         results.push_back( string_format( "\nday %d: %d", day, dummy.get_stored_kcal() ) );
         pass_time( dummy, 1_days );
         dummy.set_thirst( 0 );
@@ -171,10 +171,10 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
 
     int i = 1;
     do {
-	    ++i;
-    printf( "starve_test_hunger3 %d\n", i );
-    fflush( stdout );
-    ret = system( "free" );
+        ++i;
+        printf( "starve_test_hunger3 %d\n", i );
+        fflush( stdout );
+        ret = system( "free" );
         results.push_back( string_format( "\nday %d: %d", day, dummy.get_stored_kcal() ) );
         pass_time( dummy, 1_days );
         dummy.set_thirst( 0 );
@@ -211,10 +211,10 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
 
     int i = 1;
     for( unsigned int day = 0; day <= 20; day++ ) {
-	    ++i;
-    printf( "all_nutrition_starve_test %d\n", i );
-    fflush( stdout );
-    ret = system( "free" );
+        ++i;
+        printf( "all_nutrition_starve_test %d\n", i );
+        fflush( stdout );
+        ret = system( "free" );
         if( print_tests ) {
             printf( "day %u: %d\n", day, dummy.get_stored_kcal() );
         }
