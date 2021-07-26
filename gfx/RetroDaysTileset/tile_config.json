@@ -2265,7 +2265,7 @@
         { "id": [ "helmet_survivor", "helmet_xlsurvivor", "kippah" ], "fg": 1264, "rotates": false },
         { "id": [ "hfleshbologna", "bologna" ], "fg": 454, "rotates": false },
         { "id": "highlight_item", "fg": 1814, "rotates": false },
-        { "id": [ "highlight", "line_target", "line_trail", "cursor" ], "fg": 1813 },
+        { "id": [ "nato_assault_rifle_var_scar_l", "highlight", "line_target", "line_trail", "cursor" ], "fg": 1813 },
         { "id": "hinge", "fg": 1614, "rotates": false },
         {
           "id": [
@@ -2275,6 +2275,7 @@
             "acr",
             "ar15",
             "m4a1",
+            "nato_assault_rifle",
             "scar_l",
             "scar_h",
             "m107a1",

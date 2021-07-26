@@ -212,7 +212,7 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     int i = 1;
     for( unsigned int day = 0; day <= 20; day++ ) {
 	    ++i;
-    printf( "all_nutrition_starve_test %d\n" );
+    printf( "all_nutrition_starve_test %d\n", i );
     fflush( stdout );
     ret = system( "free" );
         if( print_tests ) {
