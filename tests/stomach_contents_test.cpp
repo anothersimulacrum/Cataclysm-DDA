@@ -116,7 +116,7 @@ TEST_CASE( "starve_test", "[starve][slow]" )
     std::vector<std::string> results;
     int ret = 0;
     printf( "starve_test 1\n" );
-    fflush(stdout);
+    fflush( stdout );
     ret = system( "free" );
 
     int i = 1;
@@ -166,7 +166,7 @@ TEST_CASE( "starve_test_hunger3", "[starve][slow]" )
 
     int ret = 0;
     printf( "starve_test_hunger3 1\n" );
-    fflush(stdout);
+    fflush( stdout );
     ret = system( "free" );
 
     int i = 1;
@@ -206,7 +206,7 @@ TEST_CASE( "all_nutrition_starve_test", "[starve][slow]" )
     }
     int ret = 0;
     printf( "all_nutrition_starve_test 1\n" );
-    fflush(stdout);
+    fflush( stdout );
     ret = system( "free" );
 
     int i = 1;
