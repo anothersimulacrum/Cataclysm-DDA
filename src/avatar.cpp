@@ -44,7 +44,6 @@
 #include "make_static.h"
 #include "magic_enchantment.h"
 #include "map.h"
-#include "map_memory.h"
 #include "martialarts.h"
 #include "messages.h"
 #include "mission.h"
@@ -118,18 +117,11 @@ static const json_character_flag json_flag_ALARMCLOCK( "ALARMCLOCK" );
 
 avatar::avatar()
 {
-    player_map_memory = std::make_unique<map_memory>();
     show_map_memory = true;
     active_mission = nullptr;
     grab_type = object_type::NONE;
     calorie_diary.push_front( daily_calories{} );
 }
-
-avatar::~avatar() = default;
-// NOLINTNEXTLINE(performance-noexcept-move-constructor)
-avatar::avatar( avatar && ) = default;
-// NOLINTNEXTLINE(performance-noexcept-move-constructor)
-avatar &avatar::operator=( avatar && ) = default;
 
 void avatar::toggle_map_memory()
 {
@@ -141,45 +133,55 @@ bool avatar::should_show_map_memory()
     return show_map_memory;
 }
 
-bool avatar::save_map_memory()
+void avatar::serialize_map_memory( JsonOut &jsout ) const
 {
-    return player_map_memory->save( get_map().getabs( pos() ) );
+    player_map_memory.store( jsout );
 }
 
-void avatar::load_map_memory()
+void avatar::deserialize_map_memory( JsonIn &jsin )
 {
-    player_map_memory->load( get_map().getabs( pos() ) );
+    player_map_memory.load( jsin );
 }
 
-void avatar::prepare_map_memory_region( const tripoint &p1, const tripoint &p2 )
+memorized_terrain_tile avatar::get_memorized_tile( const tripoint &pos ) const
 {
-    player_map_memory->prepare_region( p1, p2 );
-}
-
-const memorized_terrain_tile &avatar::get_memorized_tile( const tripoint &pos ) const
-{
-    return player_map_memory->get_tile( pos );
+    return player_map_memory.get_tile( pos );
 }
 
 void avatar::memorize_tile( const tripoint &pos, const std::string &ter, const int subtile,
                             const int rotation )
 {
-    player_map_memory->memorize_tile( pos, ter, subtile, rotation );
+    player_map_memory.memorize_tile( max_memorized_tiles(), pos, ter, subtile, rotation );
 }
 
 void avatar::memorize_symbol( const tripoint &pos, const int symbol )
 {
-    player_map_memory->memorize_symbol( pos, symbol );
+    player_map_memory.memorize_symbol( max_memorized_tiles(), pos, symbol );
 }
 
 int avatar::get_memorized_symbol( const tripoint &p ) const
 {
-    return player_map_memory->get_symbol( p );
+    return player_map_memory.get_symbol( p );
+}
+
+size_t avatar::max_memorized_tiles() const
+{
+    // Only check traits once a turn since this is called a huge number of times.
+    if( current_map_memory_turn != calendar::turn ) {
+        current_map_memory_turn = calendar::turn;
+        float map_memory_capacity_multiplier =
+            mutation_value( "map_memory_capacity_multiplier" );
+        if( has_active_bionic( bio_memory ) ) {
+            map_memory_capacity_multiplier = 50;
+        }
+        current_map_memory_capacity = 2 * SEEX * 2 * SEEY * 100 * map_memory_capacity_multiplier;
+    }
+    return current_map_memory_capacity;
 }
 
 void avatar::clear_memorized_tile( const tripoint &pos )
 {
-    player_map_memory->clear_memorized_tile( pos );
+    player_map_memory.clear_memorized_tile( pos );
 }
 
 std::vector<mission *> avatar::get_active_missions() const

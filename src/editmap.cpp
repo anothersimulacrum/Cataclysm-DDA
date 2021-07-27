@@ -462,13 +462,13 @@ void editmap::uber_draw_ter( const catacurses::window &w, map *m )
         bool draw_fld=true;
         bool draw_veh=true;
     */
-
+    bool draw_itm = true;
     bool game_map = m == &get_map() || w == g->w_terrain;
     const int msize = MAPSIZE_X;
     if( refresh_mplans ) {
         hilights["mplan"].points.clear();
     }
-    drawsq_params params = drawsq_params().center( center );
+    avatar &player_character = get_avatar();
     for( const tripoint &p : tripoint_range<tripoint>( start, end ) ) {
         int sym = game_map ? '%' : ' ';
         if( p.x >= 0 && p.x < msize && p.y >= 0 && p.y < msize ) {
@@ -477,7 +477,7 @@ void editmap::uber_draw_ter( const catacurses::window &w, map *m )
                 if( critter != nullptr ) {
                     critter->draw( w, center.xy(), false );
                 } else {
-                    m->drawsq( w, p, params );
+                    m->drawsq( w, player_character, p, false, draw_itm, center, false, true );
                 }
                 if( refresh_mplans ) {
                     monster *mon = dynamic_cast<monster *>( critter );
@@ -488,7 +488,7 @@ void editmap::uber_draw_ter( const catacurses::window &w, map *m )
                     }
                 }
             } else {
-                m->drawsq( w, p, params );
+                m->drawsq( w, player_character, p, false, draw_itm, center, false, true );
             }
         } else {
             mvwputch( w, p.xy() - start.xy(), c_dark_gray, sym );
@@ -510,6 +510,8 @@ void editmap::do_ui_invalidation()
 void editmap::draw_main_ui_overlay()
 {
     const Creature *critter = g->critter_at( target );
+
+    avatar &player_character = get_avatar();
     map &here = get_map();
 #if !defined( TILES )
     if( uberdraw ) {
@@ -521,7 +523,7 @@ void editmap::draw_main_ui_overlay()
     if( critter != nullptr ) {
         critter->draw( g->w_terrain, target, true );
     } else {
-        here.drawsq( g->w_terrain, target, drawsq_params().highlight( true ).center( target ) );
+        here.drawsq( g->w_terrain, player_character, target, true, true, target );
     }
 #ifdef TILES
     // give some visual indication of different cursor moving modes
@@ -615,7 +617,6 @@ void editmap::draw_main_ui_overlay()
         tinymap &tmpmap = *tmpmap_ptr;
 #ifdef TILES
         if( use_tiles ) {
-            const tripoint &player_location = get_player_location().pos();
             const point origin_p = target.xy() + point( 1 - SEEX, 1 - SEEY );
             for( int x = 0; x < SEEX * 2; x++ ) {
                 for( int y = 0; y < SEEY * 2; y++ ) {
@@ -632,7 +633,7 @@ void editmap::draw_main_ui_overlay()
                     g->draw_trap_override( map_p, tmpmap.tr_at( tmp_p ).loadid );
                     g->draw_field_override( map_p, tmpmap.field_at( tmp_p ).displayed_field_type() );
                     const maptile &tile = tmpmap.maptile_at( tmp_p );
-                    if( tmpmap.sees_some_items( tmp_p, player_location - origin_p ) ) {
+                    if( tmpmap.sees_some_items( tmp_p, player_character.pos() - origin_p ) ) {
                         const item &itm = tile.get_uppermost_item();
                         const mtype *const mon = itm.get_mtype();
                         g->draw_item_override( map_p, itm.typeId(), mon ? mon->id : mtype_id::NULL_ID(),
@@ -687,9 +688,9 @@ void editmap::draw_main_ui_overlay()
         } else {
 #endif
             hilights["mapgentgt"].draw( *this, true );
-            drawsq_params params = drawsq_params().center( tripoint( SEEX - 1, SEEY - 1, target.z ) );
+            const tripoint center( SEEX - 1, SEEY - 1, target.z );
             for( const tripoint &p : tmpmap.points_on_zlevel() ) {
-                tmpmap.drawsq( g->w_terrain, p, params );
+                tmpmap.drawsq( g->w_terrain, player_character, p, false, true, center, false, true );
             }
             tmpmap.rebuild_vehicle_level_caches();
 #ifdef TILES

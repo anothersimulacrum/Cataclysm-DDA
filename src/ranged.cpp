@@ -2126,7 +2126,6 @@ target_handler::trajectory target_ui::run()
         }
     }
 
-
     // Event loop!
     ExitCode loop_exit_code;
     std::string timed_out_action;
@@ -3048,7 +3047,6 @@ void target_ui::draw_terrain_overlay()
 
     // Draw spell AOE
     if( mode == TargetMode::Spell ) {
-        drawsq_params params;
         for( const tripoint &tile : spell_aoe ) {
             if( tile.z != center.z ) {
                 continue;
@@ -3058,7 +3056,7 @@ void target_ui::draw_terrain_overlay()
                 g->draw_highlight( tile );
             } else {
 #endif
-                get_map().drawsq( g->w_terrain, tile, params );
+                get_map().drawsq( g->w_terrain, *you, tile, true, true, center );
 #ifdef TILES
             }
 #endif

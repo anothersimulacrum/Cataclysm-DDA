@@ -2955,7 +2955,9 @@ bool game::load( const save_t &name )
         return false;
     }
 
-    u.load_map_memory();
+    read_from_file_optional_json( playerpath + SAVE_EXTENSION_MAP_MEMORY, [&]( JsonIn & jsin ) {
+        u.deserialize_map_memory( jsin );
+    } );
 
     const std::string log_filename = worldpath + name.base_path() + SAVE_EXTENSION_LOG;
     read_from_file_optional( log_filename,
@@ -3153,7 +3155,11 @@ bool game::save_player_data()
     const bool saved_data = write_to_file( playerfile + SAVE_EXTENSION, [&]( std::ostream & fout ) {
         serialize( fout );
     }, _( "player data" ) );
-    const bool saved_map_memory = u.save_map_memory();
+    const bool saved_map_memory = write_to_file( playerfile + SAVE_EXTENSION_MAP_MEMORY, [&](
+    std::ostream & fout ) {
+        JsonOut jsout( fout );
+        u.serialize_map_memory( jsout );
+    }, _( "player map memory" ) );
     const bool saved_log = write_to_file( playerfile + SAVE_EXTENSION_LOG, [&](
     std::ostream & fout ) {
         memorial().save( fout );
@@ -6139,7 +6145,7 @@ void game::pickup( const tripoint &p )
 {
     // Highlight target
     shared_ptr_fast<game::draw_callback_t> hilite_cb = make_shared_fast<game::draw_callback_t>( [&]() {
-        m.drawsq( w_terrain, p, drawsq_params().highlight( true ) );
+        m.drawsq( w_terrain, u, p, true, true, u.pos() + u.view_offset );
     } );
     add_draw_callback( hilite_cb );
 
@@ -6233,7 +6239,7 @@ void game::draw_look_around_cursor( const tripoint &lp, const visibility_variabl
             if( creature != nullptr && u.sees( *creature ) ) {
                 creature->draw( w_terrain, view_center, true );
             } else {
-                m.drawsq( w_terrain, lp, drawsq_params().highlight( true ).center( view_center ) );
+                m.drawsq( w_terrain, u, lp, true, true, view_center );
             }
         } else {
             std::string visibility_indicator;
