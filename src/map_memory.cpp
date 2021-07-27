@@ -81,6 +81,7 @@ const memorized_terrain_tile &map_memory::get_tile( const tripoint &pos ) const
 void map_memory::memorize_tile( const tripoint &pos, const std::string &ter,
                                 const int subtile, const int rotation )
 {
+    return;
     coord_pair p( pos );
     mm_submap &sm = get_submap( p.sm );
     if( !sm.is_valid() ) {
@@ -119,6 +120,7 @@ void map_memory::clear_memorized_tile( const tripoint &pos )
 
 bool map_memory::prepare_region( const tripoint &p1, const tripoint &p2 )
 {
+    return false;
     cata_assert( p1.z == p2.z );
     cata_assert( p1.x <= p2.x && p1.y <= p2.y );
 
@@ -151,6 +153,8 @@ bool map_memory::prepare_region( const tripoint &p1, const tripoint &p2 )
 
 shared_ptr_fast<mm_submap> map_memory::fetch_submap( const tripoint &sm_pos )
 {
+    static shared_ptr_fast<mm_submap> mm = make_shared_fast<mm_submap>();
+    return mm;
     shared_ptr_fast<mm_submap> sm = find_submap( sm_pos );
     if( sm ) {
         return sm;
@@ -249,6 +253,7 @@ static mm_submap invalid_mz_submap{ false };
 
 const mm_submap &map_memory::get_submap( const tripoint &sm_pos ) const
 {
+    return invalid_mz_submap;
     if( cache_pos == tripoint_min ) {
         debugmsg( "Called map_memory with an " );
         return invalid_mz_submap;
@@ -263,6 +268,7 @@ const mm_submap &map_memory::get_submap( const tripoint &sm_pos ) const
 
 mm_submap &map_memory::get_submap( const tripoint &sm_pos )
 {
+    return invalid_mz_submap;
     if( cache_pos == tripoint_min ) {
         return invalid_mz_submap;
     }
