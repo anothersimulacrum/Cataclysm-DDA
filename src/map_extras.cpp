@@ -628,9 +628,7 @@ static bool mx_fungal( map &m, const tripoint &abs_sub )
 
     for( int x = 0; x < SEEX * 2; ++x ) {
         for( int y = 0; y < SEEY * 2; ++y ) {
-            for( int i = 0; i < 20; ++i ) {
-                fungus.fungalize( tripoint( x, y, 0 ) );
-            }
+            fungus.fungalize( tripoint( x, y, 0 ) );
         }
     }
 

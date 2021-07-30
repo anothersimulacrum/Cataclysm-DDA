@@ -833,7 +833,9 @@ bool do_turn()
         m.spawn_monsters( false );
     }
 
-    overmap_buffer.infest_map();
+    if( calendar::once_every( 491_seconds ) ) {
+        overmap_buffer.infest_map();
+    }
 
     g->debug_hour_timer.print_time();
 

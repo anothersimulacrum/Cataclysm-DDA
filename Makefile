@@ -98,6 +98,7 @@
 RELEASE_FLAGS =
 WARNINGS = \
   -Werror -Wall -Wextra \
+  -fno-omit-frame-pointer \
   -Wformat-signedness \
   -Wlogical-op \
   -Wmissing-declarations \

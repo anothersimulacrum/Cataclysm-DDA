@@ -494,11 +494,17 @@ void overmapbuffer::infest_map()
     const tripoint_abs_sm player_pos( get_player_character().global_sm_location() );
     const tripoint_abs_omt where( sm_to_omt_copy( player_pos.raw() ) );
     for( std::pair<const tripoint_abs_omt, int> &center : inf_centers ) {
-        ++center.second;
+        if( rl_dist( where, center.first ) > 244 ) {
+            continue;
+        }
+        center.second = std::min( 100, center.second + 1 );
         for( const tripoint_abs_omt &pt : points_in_radius( center.first, center.second ) ) {
             auto it = infested.emplace( pt, center.second - rl_dist( center.first, pt ) );
             if( !it.second ) {
-                ++it.first->second;
+                it.first->second = std::min( 100, it.first->second + 1 );
+            }
+            if( it.first->second == 20 && is_omt_generated( pt ) ) {
+                ter_set( pt, oter_id( "fungalized" ) );
             }
         }
     }

@@ -6722,14 +6722,17 @@ void map::infested_shift( const tripoint &grid )
     const tripoint_abs_omt grid_abs_omt( sm_to_omt_copy( grid_abs_sub ) );
     const tripoint grid_abs_sub_rounded = omt_to_sm_copy( grid_abs_omt.raw() );
 
-    if( overmap_buffer.infestation_strength( tripoint_abs_sm( grid_abs_sub_rounded ) ) ) {
+    const int infested = overmap_buffer.infestation_strength( tripoint_abs_sm( grid_abs_sub_rounded ) );
+    if( infested > 4 ) {
         tinymap mx_map;
         tripoint_abs_sm map_pt( grid_abs_sub_rounded );
         mx_map.load( map_pt, false );
-        MapExtras::apply_function( string_id<map_extra>( "mx_fungal" ), mx_map, map_pt );
+        for( int i = 0; i < infested % 5; ++i ) {
+            MapExtras::apply_function( string_id<map_extra>( "mx_fungal" ), mx_map, map_pt );
+        }
     }
 
-    if( overmap_buffer.infestation_strength( tripoint_abs_sm( grid_abs_sub_rounded ) ) > 20 ) {
+    if( infested > 20 ) {
         overmap_buffer.ter_set( grid_abs_omt, oter_id( "fungalized" ) );
     }
 }
