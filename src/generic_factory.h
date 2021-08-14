@@ -628,12 +628,30 @@ inline void mandatory( const JsonObject &jo, const bool was_loaded, const std::s
  * Similarly, if it can use a += operator against it's own type, the non-dummy
  * handle_relative template is constructed.
  */
+/*
 template<typename T, typename = cata::void_t<>>
 struct supports_proportional : std::false_type { };
+*/
+
+template<typename T, typename = cata::void_t<>>
+struct supports_proportional_scalar : std::false_type {};
+
+template<typename T, typename = cata::void_t<>>
+struct supports_proportional_same_type : std::false_type {};
 
 template<typename T>
-struct supports_proportional<T, cata::void_t<decltype( std::declval<T &>() *= std::declval<float>() )>> :
+struct supports_proportional_scalar<T, cata::void_t<decltype( std::declval<T &>() *= std::declval<float>() )>> :
 std::true_type {};
+
+template<typename T>
+struct supports_proportional_same_type<T, cata::void_t<decltype( std::declval<T &>() *= std::declval<const T &>() )>> :
+std::true_type {};
+
+/*
+template<typename T>
+struct supports_proportional<T, cata::void_t<std::disjunction<supports_proportional_scalar<T>, supports_proportional_same_type<T>>>> :
+    std::true_type {};
+    */
 
 template<typename T, typename = cata::void_t<>>
 struct supports_relative : std::false_type { };
@@ -645,7 +663,10 @@ struct supports_relative < T, cata::void_t < decltype( std::declval<T &>() += st
 // Explicitly specialize these templates for a couple types
 // So the compiler does not attempt to use a template that it should not
 template<>
-struct supports_proportional<bool> : std::false_type {};
+struct supports_proportional_scalar<bool> : std::false_type {};
+
+template<>
+struct supports_proportional_same_type<bool> : std::false_type {};
 
 template<>
 struct supports_relative<bool> : std::false_type {};
@@ -655,45 +676,64 @@ struct supports_relative<std::string> : std::false_type {};
 
 // This checks that all units:: types will support relative and proportional
 static_assert( supports_relative<units::energy>::value, "units should support relative" );
-static_assert( supports_proportional<units::energy>::value, "units should support proportional" );
+static_assert( supports_proportional_scalar<units::energy>::value,
+               "units should support proportional" );
+static_assert( !supports_proportional_same_type<units::energy>::value,
+               "units should not support proportional" );
 
 static_assert( supports_relative<int>::value, "ints should support relative" );
-static_assert( supports_proportional<int>::value, "ints should support proportional" );
+static_assert( supports_proportional_scalar<int>::value, "ints should support proportional" );
+static_assert( supports_proportional_same_type<int>::value, "ints should support proportional" );
 
 static_assert( !supports_relative<bool>::value, "bools should not support relative" );
-static_assert( !supports_proportional<bool>::value, "bools should not support proportional" );
+static_assert( !supports_proportional_scalar<bool>::value,
+               "bools should not support proportional" );
+static_assert( !supports_proportional_same_type<bool>::value,
+               "bools should not support proportional" );
 
 // Using string ids with ints doesn't make sense in practice, but it doesn't matter here
 // The type that it is templated with does not change it's behavior
 static_assert( !supports_relative<string_id<int>>::value,
                "string ids should not support relative" );
-static_assert( !supports_proportional<string_id<int>>::value,
+static_assert( !supports_proportional_scalar<string_id<int>>::value,
+               "string ids should not support proportional" );
+static_assert( !supports_proportional_same_type<string_id<int>>::value,
                "string ids should not support proportional" );
 
 // Using int ids with ints doesn't make sense in practice, but it doesn't matter here
 // The type that it is templated with does not change it's behavior
 static_assert( !supports_relative<int_id<int>>::value,
                "int ids should not support relative" );
-static_assert( !supports_proportional<int_id<int>>::value,
+static_assert( !supports_proportional_scalar<int_id<int>>::value,
+               "int ids should not support proportional" );
+static_assert( !supports_proportional_same_type<int_id<int>>::value,
                "int ids should not support proportional" );
 
 static_assert( !supports_relative<std::string>::value, "strings should not support relative" );
-static_assert( !supports_proportional<std::string>::value,
+static_assert( !supports_proportional_scalar<std::string>::value,
+               "strings should not support proportional" );
+static_assert( !supports_proportional_same_type<std::string>::value,
                "strings should not support proportional" );
 
 // Grab an enum class from debug.h
 static_assert( !supports_relative<DebugOutput>::value, "enum classes should not support relative" );
-static_assert( !supports_proportional<DebugOutput>::value,
+static_assert( !supports_proportional_scalar<DebugOutput>::value,
+               "enum classes should not support proportional" );
+static_assert( !supports_proportional_same_type<DebugOutput>::value,
                "enum classes should not support proportional" );
 
 // Grab a normal enum from there too
 static_assert( !supports_relative<DebugLevel>::value, "enums should not support relative" );
-static_assert( !supports_proportional<DebugLevel>::value, "enums should not support relative" );
+static_assert( !supports_proportional_scalar<DebugLevel>::value,
+               "enums should not support relative" );
+static_assert( !supports_proportional_same_type<DebugLevel>::value,
+               "enums should not support relative" );
 
 // Dummy template:
 // Warn if it's trying to use proportional where it cannot, but otherwise just
 // return.
-template < typename MemberType, std::enable_if_t < !supports_proportional<MemberType>::value > * =
+template < typename MemberType,
+           std::enable_if_t < !supports_proportional_scalar<MemberType>::value > * =
            nullptr >
 inline bool handle_proportional( const JsonObject &jo, const std::string &name, MemberType & )
 {
@@ -712,7 +752,7 @@ inline bool handle_proportional( const JsonObject &jo, const std::string &name, 
 // this, so member will contain the value of the thing we inherit from
 // So, check if there is a proportional entry, check if it's got a valid value
 // and if it does, multiply the member by it.
-template<typename MemberType, std::enable_if_t<supports_proportional<MemberType>::value>* = nullptr>
+template<typename MemberType, std::enable_if_t<std::disjunction<supports_proportional_scalar<MemberType>, supports_proportional_same_type<MemberType>>::value>* = nullptr>
 inline bool handle_proportional( const JsonObject &jo, const std::string &name, MemberType &member )
 {
     if( jo.has_object( "proportional" ) ) {

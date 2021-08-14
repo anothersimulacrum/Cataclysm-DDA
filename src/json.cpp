@@ -112,7 +112,7 @@ void JsonObject::report_unvisited() const
 {
 #ifndef CATA_IN_TOOL
     if( report_unvisited_members && !reported_unvisited_members &&
-        !std::uncaught_exception() ) {
+        std::uncaught_exceptions() == 0 ) {
         reported_unvisited_members = true;
         for( const std::pair<const std::string, int> &p : positions ) {
             const std::string &name = p.first;
