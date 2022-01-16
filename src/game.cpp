@@ -10892,6 +10892,8 @@ cata::optional<tripoint> game::find_or_make_stairs( map &mp, const int z_after, 
     }
     // We did not find stairs directly above or below, so search the map for them
     if( !stairs.has_value() ) {
+        debugmsg( "No direct stairs from %s to %s", overmap_buffer.ter( u.global_omt_location() ).id().str(),
+                  overmap_buffer.ter( u.global_omt_location() + tripoint( 0, 0, movez ) ).id().str() );
         for( const tripoint &dest : m.points_in_rectangle( omtile_align_start, omtile_align_end ) ) {
             if( rl_dist( u.pos(), dest ) <= best &&
                 ( ( going_down_1 && mp.has_flag( ter_furn_flag::TFLAG_GOES_UP, dest ) ) ||
