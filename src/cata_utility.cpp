@@ -563,8 +563,11 @@ std::string join( const std::vector<std::string> &strings, const std::string &jo
     return buffer.str();
 }
 
+namespare io
+{
+
 template<>
-std::string io::enum_to_string<holiday>( holiday data )
+std::string enum_to_string<holiday>( holiday data )
 {
     switch( data ) {
         // *INDENT-OFF*
@@ -580,6 +583,8 @@ std::string io::enum_to_string<holiday>( holiday data )
             break;
     }
     cata_fatal( "Invalid holiday." );
+}
+
 }
 
 /* compare against table of easter dates */
