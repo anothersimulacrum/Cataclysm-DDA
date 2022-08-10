@@ -375,12 +375,7 @@
     "batch_time_factors": [ 80, 20 ],
     "book_learn": [ [ "recipe_animal", 6 ] ],
     "using": [ [ "mutagen_production_standard", 25 ] ],
-    "components": [
-      [ [ "mutagen", 1 ] ],
-      [ [ "ursine_sample", 1 ] ],
-      [ [ "mutant_lard", 5 ], [ "honey_bottled", 1 ] ],
-      [ [ "honeycomb", 2 ], [ "ursine_sample", 1 ] ]
-    ],
+    "components": [ [ [ "mutagen", 1 ] ], [ [ "ursine_sample", 1 ] ], [ [ "mutant_lard", 5 ] ], [ [ "ursine_sample", 1 ] ] ],
     "flags": [ "SECRET" ]
   },
   {
