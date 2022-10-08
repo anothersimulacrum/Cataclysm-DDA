@@ -422,7 +422,7 @@
     "skills_required": [ "fabrication", 1 ],
     "time": "10 m",
     "autolearn": true,
-    "proficiencies": [ { "proficiency": "prof_spinning", "fail_multiplier": 1.5 } ],
+    "proficiencies": [ { "proficiency": "prof_spinning", "skill_penalty": 0.5 } ],
     "tools": [ [ [ "distaff_spindle", -1 ] ] ],
     "components": [ [ [ "cotton_ball", 3 ] ] ]
   },
@@ -437,7 +437,7 @@
     "skill_used": "tailor",
     "time": "30 s",
     "autolearn": true,
-    "proficiencies": [ { "proficiency": "prof_spinning", "fail_multiplier": 1.5 } ],
+    "proficiencies": [ { "proficiency": "prof_spinning", "skill_penalty": 0.5 } ],
     "tools": [ [ [ "spinwheelitem", -1 ] ] ],
     "components": [ [ [ "cotton_ball", 3 ] ] ]
   },
@@ -886,7 +886,7 @@
       { "id": "CUT", "level": 2 },
       { "id": "FILE", "level": 1 }
     ],
-    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 1.25, "fail_multiplier": 1.125 } ],
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 1.25, "skill_penalty": 0.125 } ],
     "components": [ [ [ "mop", 1 ], [ "stick", 1 ], [ "broom", 1 ] ], [ [ "wax", 1 ], [ "rosin", 1 ] ] ]
   },
   {
@@ -1036,7 +1036,7 @@
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
     "time": "30 minutes",
-    "proficiencies": [ { "proficiency": "prof_carving", "fail_multiplier": 1, "time_multiplier": 2 } ],
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 2, "skill_penalty": 0 } ],
     "qualities": [ { "id": "CUT", "level": 2 } ],
     "components": [ [ [ "2x4", 1 ] ] ],
     "byproducts": [ [ "splinter", 5 ] ],

@@ -101,7 +101,7 @@ void proficiency::load( const JsonObject &jo, const std::string & )
     mandatory( jo, was_loaded, "category", _category );
 
     optional( jo, was_loaded, "default_time_multiplier", _default_time_multiplier );
-    optional( jo, was_loaded, "default_fail_multiplier", _default_fail_multiplier );
+    optional( jo, was_loaded, "default_skill_penalty", _default_skill_penalty );
     optional( jo, was_loaded, "default_weakpoint_bonus", _default_weakpoint_bonus );
     optional( jo, was_loaded, "default_weakpoint_penalty", _default_weakpoint_penalty );
     optional( jo, was_loaded, "time_to_learn", _time_to_learn );
@@ -162,9 +162,9 @@ float proficiency::default_time_multiplier() const
     return _default_time_multiplier;
 }
 
-float proficiency::default_fail_multiplier() const
+float proficiency::default_skill_penalty() const
 {
-    return _default_fail_multiplier;
+    return _default_skill_penalty;
 }
 
 float proficiency::default_weakpoint_bonus() const
