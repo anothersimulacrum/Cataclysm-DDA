@@ -75,7 +75,42 @@ added as variants instead of distinct items.
 
 ## Rarity Threshold
 
-TODO: Write something here
+Pre-cataclysm firearms from the same dimension in which the game takes place in
+can be broadly divided into 5 categories: civilian, civilian
+NFA(non-machinegun), civilian machineguns, police, and military
+
+### Civilian Firearms
+
+Non-machinegun civilian firearms: these are your normal shotguns, handguns,
+rifles, pcc's, etc.
+
+Per family of firearm, if there have been historically 100 listings or more
+combined on a secondary market's website (e.g. gunbroker, gunsamerica, Rock
+island auctionhouse, etc) then the gun is common enough for inclusion into
+C:DDA. A family of firearms would include things like, all S&W K-frame models,
+all types of mosin-nagant longarms, the entire MDR rifle family, etc. This is
+distinct from "100 models produced, ever", as it is instead a measure of how
+common the guns are on the broader market.
+
+Civilian NFA firearms: Short Barreled Rifles, Short Barreled Shotguns, Any
+Other Weapons, or Silencers.
+
+- Silencers: Should be genercized into types of silencers. Shotgun silencer, rimfire silencer, pistol silencer, ~~pistol (wipe) silencer~~, hybrid rifle/pistol silencer, rifle silencer, rifle (flow through) silencer, big bore silencer. Specific models should be avoided. [POSSIBLY FEWER THAN THIS]
+
+- SBRs, SBSs: If they're major models like AK's, AR's, 870's, or 500's, maybe, but they need to be very uncommon. Anything else, too rare to include. At a ratio of 532000 SBR's (2021, ATF) : 393347000 (total guns in the US, est), an SBR/SBS should be 0.00135 times as common as its longarm counterpart, or otherwise just be described as its non-NFA pistol braced variant.
+
+- AOW's(pen guns, cane guns, not technically-an-AOW's like a pistol with a VFG): no.
+
+Civilian Machineguns: If it's not a MAC 10, MAC 11, Full size UZI, STEN gun,
+SW76/Swedish K, American 180, HK autosear (living in an mp5, HK33, HK53, HK91),
+Thompsons, M16/M4, Lightning link (living in an AR), or an actual AK-47, then
+no. No post samples.
+
+### Military and Police Firearms
+
+These are harder to find stats on, but guns are not allowed simply by merit of
+being used by the military or police. Whether or not a gun will be allowed will
+be determined in large part by mergers.
 
 ## Difference Threshold
 
